@@ -11,12 +11,12 @@ Files: `pom.xml`, `mvnw`, `mvnw.cmd`, `.mvn/`, `.gitignore`, `LICENSE.md`, `READ
 Template (read only): `/home/mkf/dev/sirk-logistics-taxonomy`.
 Tests: `mvnq -q verify`; `mvnq dependency:tree`.
 
-- [ ] 1.1 Copy `mvnw`, `mvnw.cmd`, `.mvn/`, `.gitignore` from the template; add `LICENSE.md` (MIT, same holder as the template)
-- [ ] 1.2 Write `pom.xml` per D1: `com.ledger17:accounting-taxonomy:${revision}` (`1.0-SNAPSHOT`), `maven.compiler.release` 17, `jena-arq` 5.5.0 compile; test: JUnit 5.11.3, `jena-shacl` 5.5.0, slf4j-simple; copy only the `github-packages` profile with `distributionManagement` → `https://maven.pkg.github.com/sirktek/ledger17-accounting-taxonomy`; no `deployment` profile, no `taxonomy-commons` or its `<repositories>` entry, no Lombok; SCM/url `sirktek/ledger17-accounting-taxonomy`
-- [ ] 1.3 Copy `.github/workflows/build_only.yml`; copy `build_tag_and_release.yml` keeping only checkout, JDK setup (`server-id: github`), test, tag, release-version steps and "Publish to GitHub Packages"; remove the Central/GPG steps and secrets; reword the "Verify Release Version" message (no Maven Central); revision `1.${{github.run_number}}`
-- [ ] 1.4 Stub `README.md`; create `src/main/resources/ontologies/` and `src/main/java/<pkg>/`
-- [ ] 1.5 `OntologySyntaxTest`: parses every `*.ttl` under `src/main/resources/ontologies/` with Jena RIOT and fails on any syntax error (passes with zero files); later groups use it as their syntax gate
-- [ ] 1.6 `mvnq -q verify` passes; `mvnq dependency:tree` shows only Jena (+ transitive) at compile scope
+- [x] 1.1 Copy `mvnw`, `mvnw.cmd`, `.mvn/`, `.gitignore` from the template; add `LICENSE.md` (MIT, same holder as the template)
+- [x] 1.2 Write `pom.xml` per D1: `com.ledger17:accounting-taxonomy:${revision}` (`1.0-SNAPSHOT`), `maven.compiler.release` 17, `jena-arq` 5.5.0 compile; test: JUnit 5.11.3, `jena-shacl` 5.5.0, slf4j-simple; copy only the `github-packages` profile with `distributionManagement` → `https://maven.pkg.github.com/sirktek/ledger17-accounting-taxonomy`; no `deployment` profile, no `taxonomy-commons` or its `<repositories>` entry, no Lombok; SCM/url `sirktek/ledger17-accounting-taxonomy`
+- [x] 1.3 Copy `.github/workflows/build_only.yml`; copy `build_tag_and_release.yml` keeping only checkout, JDK setup (`server-id: github`), test, tag, release-version steps and "Publish to GitHub Packages"; remove the Central/GPG steps and secrets; reword the "Verify Release Version" message (no Maven Central); revision `1.${{github.run_number}}`
+- [x] 1.4 Stub `README.md`; create `src/main/resources/ontologies/` and `src/main/java/<pkg>/`
+- [x] 1.5 `OntologySyntaxTest`: parses every `*.ttl` under `src/main/resources/ontologies/` with Jena RIOT and fails on any syntax error (passes with zero files); later groups use it as their syntax gate
+- [x] 1.6 `mvnq -q verify` passes; `mvnq dependency:tree` shows only Jena (+ transitive) at compile scope
 
 ### Group 2: Core module
 
