@@ -57,7 +57,7 @@ third-party trademark in any name; `NamingTest`'s forbidden tokens must not matc
 
 ## 7. Docs and release
 
-- [ ] 7.1 README: purpose and ownership (ledger17 domain knowledge, hosted in the sirktek org), modules and namespaces (D2) with the modules-vs-tags rationale, term tables (D4–D6), value semantics, code-list year policy (how to add a year when the coverage test fails), Maven coordinates and the GitHub Packages repository + `read:packages` token requirement, Java API example (`load(Set.of("NO"))`), consumer mapping (D7), refinement policy (`skos:broader`, codes frozen), not-in-scope list (VAT, non-asset transactions, IFRS links later), attribution for Skatteetaten sources; no third-party trademarks as names
+- [ ] 7.1 README: purpose and ownership (ledger17 domain knowledge, hosted in the sirktek org), modules and namespaces (D2) with the modules-vs-tags rationale, term tables (D4–D6), value semantics, code-list year policy (how to add a year when the coverage test warns), Maven coordinates and the GitHub Packages repository + `read:packages` token requirement, Java API example (`load(Set.of("NO"))`), consumer mapping (D7), refinement policy (`skos:broader`, codes frozen), not-in-scope list (VAT, non-asset transactions, IFRS links later), attribution for Skatteetaten sources; no third-party trademarks as names
 - [ ] 7.2 README "Adopting": Maven dependency, `AccountingTaxonomy.load(Set.of("NO")).model()` example, Jena 5.5 requirement
 
 ## Follow-up changes (other repos, not tasks here)
