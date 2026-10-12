@@ -97,8 +97,8 @@ full suite once: `mvnq verify`.
 Files: `README.md`.
 Tests: `mvnq -q test -Dtest=NamingTest` (README must not trip the naming rule if the test covers it; otherwise `grep -niE '\bnrs\b' README.md` is empty).
 
-- [ ] 8.1 README: purpose and ownership (ledger17 domain knowledge, hosted in the sirktek org), modules and namespaces (D2) with the modules-vs-tags rationale, term tables (D4–D6), value semantics, code-list year policy (how to add a year when the coverage test warns), Maven coordinates and the GitHub Packages repository + `read:packages` token requirement, Java API example (`load(Set.of("NO"))`), consumer mapping (D7), refinement policy (`skos:broader`, codes frozen), not-in-scope list (VAT, non-asset transactions, IFRS links later), attribution for Skatteetaten sources; no third-party trademarks as names
-- [ ] 8.2 README "Adopting": Maven dependency, `AccountingTaxonomy.load(Set.of("NO")).model()` example, Jena 5.5 requirement
+- [x] 8.1 README: purpose and ownership (ledger17 domain knowledge, hosted in the sirktek org), modules and namespaces (D2) with the modules-vs-tags rationale, term tables (D4–D6), value semantics, code-list year policy (how to add a year when the coverage test warns), Maven coordinates and the GitHub Packages repository + `read:packages` token requirement, Java API example (`load(Set.of("NO"))`), consumer mapping (D7), refinement policy (`skos:broader`, codes frozen), not-in-scope list (VAT, non-asset transactions, IFRS links later), attribution for Skatteetaten sources; no third-party trademarks as names
+- [x] 8.2 README "Adopting": Maven dependency, `AccountingTaxonomy.load(Set.of("NO")).model()` example, Jena 5.5 requirement
 
 ## Follow-up changes (other repos, not tasks here)
 

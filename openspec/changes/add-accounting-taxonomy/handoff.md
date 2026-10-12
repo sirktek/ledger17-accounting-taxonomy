@@ -45,3 +45,8 @@ Changed: accounting-no.ttl (saftGroupingCode values per type; GroupingCodeList20
 Verified: group tests green; `mvnq verify` green (58 tests).
 Notes: BankAccount codes are 1920 and 1950 only (no 1960 in the list; 1900 is outside any range). Spec line "each code also has inCodeList" cannot hold for literals; the GroupingCodeList carries the coverage instead (incomeYear 2025, 2026). Annotations stripped with a one-off lxml script (not committed); XSDs are re-serialised, so SHA-256 in NOTICE are of the originals.
 Unverified: none known; CI not run.
+
+## Handoff: Group 8
+Changed: README.md (purpose, modules, term tables, semantics, year policy, consumer mapping, not in scope, Adopting, attribution).
+Verified: NamingTest (see run); grep for the forbidden token and the standards-foundation name in README is empty.
+Unverified: the Maven repository/dependency snippet was not resolved against GitHub Packages; version left as 1.N.
