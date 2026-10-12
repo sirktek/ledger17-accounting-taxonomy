@@ -336,6 +336,56 @@ referenced):
   - The year-specific Skatte-ABC page sits on `acctno:SaldogruppeCodeList2025` (code lists above).
 - Comments paraphrase these sources in our own words; no text is copied.
 
+**Schema element mappings** (in addition to the `rdfs:seeAlso` pages; asserted in the NO file):
+- Skatteetaten's XSDs in `github.com/Skatteetaten/skattemeldingen` (`src/resources/xsd/`) give stable,
+  versioned element names. A mapping to them is a mapping to a data element, not to a concept, so it is
+  never a SKOS match.
+- `acctno:SchemaVersion` nodes, one per schema and version:
+  - `acctno:schemaName`, `acctno:schemaVersion`, `acctno:schemaNamespace` (the XSD's target namespace),
+    `acctno:incomeYear` (same property as on `CodeList`);
+  - `dct:source` the XSD at a release tag:
+    `https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/<file>.xsd`
+    (tag commit `9784809838c8c910b494f91f03d25a7c4fe44a36`, 2026-10-10).
+  - v1 instances:
+
+    | Node | File | Income year | Code lists it names |
+    |---|---|---|---|
+    | `acctno:NaeringsspesifikasjonV6` | `naeringsspesifikasjon_v6_ekstern.xsd` | 2025 | `2025_*` |
+    | `acctno:NaeringsspesifikasjonV7` | `naeringsspesifikasjon_v7_ekstern.xsd` | 2026 | `2026_*` |
+    | `acctno:SkattemeldingUpersonligV5` | `skattemeldingUpersonlig_v5_ekstern.xsd` | 2025 | `2025_*` |
+    | `acctno:SkattemeldingUpersonligV6` | `skattemeldingUpersonlig_v6_ekstern.xsd` | 2026 | `2026_*` |
+
+    The income year is read from the year prefix of the code lists each XSD names in
+    `skatt:eksternKodeliste` (v6/v5 name only `2025_` lists, v7/v6 only `2026_`).
+- `acctno:SchemaElementMapping` nodes: `acctno:mapsTerm` (the term), `acctno:inSchema` (a
+  `SchemaVersion`), `acctno:schemaElement` (path literal `<complexType>/<element>`; the element may be
+  inherited through an `xsd:extension` base) and optionally `acctno:openingSchemaElement`.
+- Mapping table (identical paths in both versions of each schema):
+
+  | Term | Schema | `schemaElement` | Note |
+  |---|---|---|---|
+  | `acct:depreciationGroup` | naeringsspesifikasjon v6, v7 | `SaldoavskrevetAnleggsmiddel/saldogruppe` | value is a `saldogruppe` code (`<year>_saldogruppe.xml`) |
+  | `acctno:depreciationRate` | naeringsspesifikasjon v6, v7 | `SaldoavskrevetAnleggsmiddel/avskrivningssats` | the rate used; ours is the statutory maximum |
+  | `acct:taxValue` | naeringsspesifikasjon v6, v7 | `SaldoavskrevetAnleggsmiddel/utgaaendeVerdi` | inherited from `AnleggsmiddelFelles`; `openingSchemaElement` `SaldoavskrevetAnleggsmiddel/inngaaendeVerdi` = the previous year's `taxValue` |
+  | `acctno:wealthValue` | skattemeldingUpersonlig v5, v6 | `Formuesobjekt/formuesverdi` | in the formuesobjekt context; the object's kind is `Formuesobjekt/formuesobjekttype` |
+
+- Not mapped, recorded here only: the other saldo components of `SaldoavskrevetAnleggsmiddel`
+  (`nyanskaffelse`, `paakostning`, `offentligTilskudd`, `justeringAvInngaaendeMva`,
+  `vederlagVedRealisasjonOgUttak`, `nedskrevetVerdiAvUtskiltAnleggsmiddel`,
+  `grunnlagForAvskrivningOgInntektsfoering`, `aaretsAvskrivning`, `aaretsInntektsfoeringAvNegativSaldo`,
+  `gevinstOverfoertTilGevinstOgTapskonto`, `tapOverfoertTilGevinstOgTapskonto`). The closing balance moves
+  with all of them, so this vocabulary states no formula linking opening value, depreciation and closing
+  value. `formuesverdi` in naeringsspesifikasjon occurs only in a power-plant calculation and is not
+  mapped.
+- None of the mapped elements carries `skatt:begrepsreferanse`. `avskrivningssats`'s wrapper type points
+  at the generic "prosent" concept, which is not a concept for the depreciation rate and gets no link.
+- No per-group rate cap is modeled: the XSDs constrain `avskrivningssats` only as a generic percentage
+  (v7 bounds `Prosent` to 0–100, v6 not at all). The per-group maxima come from skatteloven § 14-43 and
+  are already `acctno:depreciationRate`.
+- Fixtures: the four XSDs with every `xsd:annotation` removed (element and type names, attributes and code
+  list references only, no documentation texts), under `src/test/resources/xsd/` with a NOTICE (Apache-2.0,
+  tag, commit SHA and the original files' SHA-256).
+
 **NO SHACL:**
 - `acctno:LedgerAccountShape` (`sh:targetSubjectsOf acct:ledgerAccount`): pattern `^[1-8][0-9]{3}$`.
 - `acctno:WealthValueShape` (`sh:targetClass acct:AssetValuation`): not both `wealthValue` and
@@ -455,6 +505,12 @@ Nothing else: no service layer and no Sirk-style generic `PropertyDefinition`.
   `^https://data\.skatteetaten\.no/web/datakatalog/begrep/[0-9a-f-]{36}$` (so no `www.skatteetaten.no` page is
   ever a match target); Building has the two closeMatches; the D6 `rdfs:seeAlso` links exist; core-only
   loads have none of them. No network access.
+- `SchemaElementTest` (no network): parses each fixture XSD; every `SchemaVersion` has a fixture whose
+  target namespace equals `schemaNamespace`; every `schemaElement` and `openingSchemaElement` resolves (the
+  complex type exists and declares the element directly or through an `xsd:extension` base); every
+  mapped term has a mapping for each version listed in the D6 table; no mapping object is a
+  `skos:closeMatch`/`exactMatch` and no mapped term has a SKOS match to a GitHub URL; filing-year coverage
+  as in `CodeListCoverageTest` (both schemas need a `SchemaVersion` for income year `Year.now - 1`).
 - `CapitalisationThresholdTest`: every `saldogruppe` `CodeList` has exactly one
   `capitalisationThreshold` and one `minimumLifetimeYears`; 2025 and 2026 are 30000 and 3; both cite
   § 14-40.

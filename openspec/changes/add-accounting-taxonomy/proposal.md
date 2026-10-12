@@ -24,7 +24,7 @@ ranges) must be loadable only by consumers that operate in Norway.
   `acctno:`: NS 4102 account ranges, saldogrupper a–j with statutory rates (skatteloven § 14-41/§ 14-43),
   `wealthValue`/`wealthValuePerShare` with the formuesverdi rules (skatteloven § 4-17), per-asset-type
   formuesverdi applicability, year-versioned Skatteetaten code lists (`saldogruppe`), SAF-T
-  grouping-code references (Skatteetaten's næringsspesifikasjon list), SKOS links to Skatteetaten datakatalog concepts, `rdfs:seeAlso` links to Skatteetaten reference pages, and the per-year capitalisation threshold (skatteloven § 14-40).
+  grouping-code references (Skatteetaten's næringsspesifikasjon list), SKOS links to Skatteetaten datakatalog concepts, `rdfs:seeAlso` links to Skatteetaten reference pages, per-version mappings to element names in Skatteetaten's tax-return XSDs, and the per-year capitalisation threshold (skatteloven § 14-40).
 - Concepts from ledger17's internal ontology that this vocabulary needs are carried over under the new
   namespaces (mapping in design.md); its file is not copied. VAT and non-asset transaction types stay
   internal to ledger17.

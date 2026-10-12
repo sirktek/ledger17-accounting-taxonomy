@@ -114,3 +114,24 @@ asset is a driftsmiddel that must be capitalised, citing skatteloven § 14-40 in
 #### Scenario: Missing threshold
 - **WHEN** a `saldogruppe` code list lacks `acctno:capitalisationThreshold` or `acctno:minimumLifetimeYears`
 - **THEN** the test suite fails
+
+### Requirement: Schema element mappings
+The Norway module SHALL map `acct:depreciationGroup`, `acctno:depreciationRate`, `acct:taxValue` and
+`acctno:wealthValue` to element paths in Skatteetaten's XSDs (github.com/Skatteetaten/skattemeldingen),
+per schema version, using `acctno:SchemaElementMapping` nodes that point at an `acctno:SchemaVersion`
+(schema name, version, target namespace, income year, `dct:source` = the XSD's URL at a release tag). These
+mappings SHALL NOT be expressed as SKOS matches, and SHALL be in addition to the `rdfs:seeAlso` links. The
+module SHALL NOT state a formula between opening value, depreciation and closing value, and SHALL NOT model
+a per-group rate cap from the schemas.
+
+#### Scenario: Mapped elements exist in the cited version
+- **WHEN** each `acctno:schemaElement` and `acctno:openingSchemaElement` path is resolved against the stored XSD fixture of its `acctno:SchemaVersion`
+- **THEN** the complex type exists and declares the element, directly or through an `xsd:extension` base
+
+#### Scenario: Version coverage
+- **WHEN** the mappings are listed
+- **THEN** `acct:depreciationGroup`, `acctno:depreciationRate` and `acct:taxValue` map to `naeringsspesifikasjon` v6 (income year 2025) and v7 (2026), and `acctno:wealthValue` maps to `skattemeldingUpersonlig` v5 (2025) and v6 (2026)
+
+#### Scenario: Not a concept match
+- **WHEN** the SKOS match objects of the Norway module are listed
+- **THEN** none is a GitHub URL or a schema element
