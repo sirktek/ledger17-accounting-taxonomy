@@ -23,14 +23,14 @@ Tests: `mvnq -q verify`; `mvnq dependency:tree`.
 Files: `src/main/resources/ontologies/accounting-core.ttl`.
 Tests: `mvnq -q test -Dtest=OntologySyntaxTest`.
 
-- [ ] 2.1 Header comment (jurisdiction-neutral core, mirrors ledger17's ASSET model, isolation and naming rules, "values say what, never where produced"); prefixes `rdf rdfs xsd skos sh dct acct` only
-- [ ] 2.2 Carried-over classes per D3/D4: `AssetPurchase`, `Depreciation`, `FiscalYear`, `AccountType` + six account type values incl. `EquityAndLiabilitiesAccount` with `skos:broader` from Equity/Liability (labels/comments written fresh; do not copy ledger17's file)
-- [ ] 2.3 `acct:Asset`, `acct:AssetValuation`, `acct:DepreciationGroup` (no instances), annotations `accountType`, `requiresCounterparty`, `appliesToAssetType`, `defaultAssetType`
-- [ ] 2.4 Account numbers per D4: `ledgerAccount` (`^[0-9]{4}$`, `@no` "Regnskapskonto"), `accountGroup`, `accountClass`; `sh:sparql` consistency check in `acct:AssetShape`
-- [ ] 2.5 `acct:AssetType` + six instances per D4 (notation = ledger17 code; `acct:Equipment` labels "Equipment and vehicles" / "Utstyr og kjøretøy")
-- [ ] 2.6 Core properties per D5 with applicability; `bookValue`/`taxValue` comments (own wording, no Sirk IRIs)
-- [ ] 2.7 `acct:AssetShape`, `acct:AssetValuationShape` per the accounting-core spec, messages `@en` + `@no`
-- [ ] 2.8 `OntologySyntaxTest` green; `grep` shows no `sirktek`, no `schema:`, no `NamingTest` forbidden token
+- [x] 2.1 Header comment (jurisdiction-neutral core, mirrors ledger17's ASSET model, isolation and naming rules, "values say what, never where produced"); prefixes `rdf rdfs xsd skos sh dct acct` only
+- [x] 2.2 Carried-over classes per D3/D4: `AssetPurchase`, `Depreciation`, `FiscalYear`, `AccountType` + six account type values incl. `EquityAndLiabilitiesAccount` with `skos:broader` from Equity/Liability (labels/comments written fresh; do not copy ledger17's file)
+- [x] 2.3 `acct:Asset`, `acct:AssetValuation`, `acct:DepreciationGroup` (no instances), annotations `accountType`, `requiresCounterparty`, `appliesToAssetType`, `defaultAssetType`
+- [x] 2.4 Account numbers per D4: `ledgerAccount` (`^[0-9]{4}$`, `@no` "Regnskapskonto"), `accountGroup`, `accountClass`; `sh:sparql` consistency check in `acct:AssetShape`
+- [x] 2.5 `acct:AssetType` + six instances per D4 (notation = ledger17 code; `acct:Equipment` labels "Equipment and vehicles" / "Utstyr og kjøretøy")
+- [x] 2.6 Core properties per D5 with applicability; `bookValue`/`taxValue` comments (own wording, no Sirk IRIs)
+- [x] 2.7 `acct:AssetShape`, `acct:AssetValuationShape` per the accounting-core spec, messages `@en` + `@no`
+- [x] 2.8 `OntologySyntaxTest` green; `grep` shows no `sirktek`, no `schema:`, no `NamingTest` forbidden token
 
 ### Group 3: Norway module
 
