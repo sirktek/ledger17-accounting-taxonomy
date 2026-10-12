@@ -149,6 +149,57 @@ acctno:saftGroupingCode a rdf:Property ;
     rdfs:label "SAF-T grouping code"@en , "SAF-T grupperingskode"@no ;
     rdfs:comment "A grouping code from Skatteetaten's list that lies inside the account range of this asset type. May be repeated. Only the code is carried, never its description."@en .
 
+acctno:SchemaVersion a rdfs:Class ;
+    rdfs:label "Schema version"@en , "Skjemaversjon"@no ;
+    rdfs:comment "One version of one of the tax authority's filing schemas, tied to an income year."@en .
+
+acctno:SchemaElementMapping a rdfs:Class ;
+    rdfs:label "Schema element mapping"@en , "Skjemaelementkobling"@no ;
+    rdfs:comment "Maps a term of this vocabulary to an element path in one schema version. It is a mapping to a data element, never a concept match."@en .
+
+# ---- Schema element mapping terms ----
+
+acctno:schemaName a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema name"@en , "Skjemanavn"@no ;
+    rdfs:comment "The short name of the filing schema, the same for every version."@en .
+
+acctno:schemaVersion a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema version number"@en , "Skjemaversjonsnummer"@no ;
+    rdfs:comment "The version number of the filing schema."@en .
+
+acctno:schemaNamespace a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema namespace"@en , "Skjemanavnerom"@no ;
+    rdfs:comment "The target namespace of the schema version."@en .
+
+acctno:mapsTerm a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:label "Maps term"@en , "Kobler begrep"@no ;
+    rdfs:comment "The term of this vocabulary that the mapping describes."@en .
+
+acctno:inSchema a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range acctno:SchemaVersion ;
+    rdfs:label "In schema"@en , "I skjema"@no ;
+    rdfs:comment "The schema version that the element path is resolved against."@en .
+
+acctno:schemaElement a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema element"@en , "Skjemaelement"@no ;
+    rdfs:comment "The element path, written as complex type name, a slash and element name. The element may be declared in a base type that the complex type extends."@en .
+
+acctno:openingSchemaElement a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range xsd:string ;
+    rdfs:label "Opening schema element"@en , "Inngaaende skjemaelement"@no ;
+    rdfs:comment "The element path that holds the opening value, which equals the previous year's value of the mapped term. Same notation as schemaElement."@en .
+
 # ---- Formuesverdi fields ----
 
 acctno:wealthValue a rdf:Property ;
@@ -284,14 +335,58 @@ acct:LiabilityAccount acctno:accountRange acctno:RangeLiabilityAccount .
 acct:RevenueAccount acctno:accountRange acctno:RangeRevenueAccount .
 acct:ExpenseAccount acctno:accountRange acctno:RangeExpenseAccount .
 
-# ---- SAF-T grouping category per asset type (codes are added with the code-list data) ----
+# ---- SAF-T grouping category and codes per asset type (codes lie inside the type's ranges; 1296, 1298 and 1299 are left out) ----
 
-acct:Intangible acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" .
-acct:Building acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" .
-acct:Equipment acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" .
-acct:FinancialFixedAsset acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" .
-acct:FinancialInstruments acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" .
-acct:BankAccount acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" .
+acct:Intangible acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1000" ,
+    "1020" ,
+    "1070" ,
+    "1080" .
+acct:Building acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1101" ,
+    "1102" ,
+    "1103" ,
+    "1104" ,
+    "1105" ,
+    "1115" ,
+    "1117" ,
+    "1120" ,
+    "1130" ,
+    "1140" ,
+    "1150" ,
+    "1160" ,
+    "1180" .
+acct:Equipment acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1205" ,
+    "1221" ,
+    "1225" ,
+    "1238" ,
+    "1280" ,
+    "1290" ,
+    "1295" .
+acct:FinancialFixedAsset acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1312" ,
+    "1313" ,
+    "1320" ,
+    "1331" ,
+    "1332" ,
+    "1340" ,
+    "1350" ,
+    "1360" ,
+    "1370" ,
+    "1380" ,
+    "1390" ,
+    "1395" .
+acct:FinancialInstruments acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" ;
+    acctno:saftGroupingCode "1800" ,
+    "1810" ,
+    "1830" ,
+    "1840" ,
+    "1880" ,
+    "1895" .
+acct:BankAccount acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" ;
+    acctno:saftGroupingCode "1920" ,
+    "1950" .
 
 # ---- Depreciation groups (skatteloven section 14-41 and section 14-43) ----
 
@@ -446,3 +541,111 @@ acctno:depreciationRate rdfs:seeAlso <https://www.skatteetaten.no/satser/avskriv
 acct:taxValue rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
 acctno:capitalisationThreshold rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
 acctno:minimumLifetimeYears rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+
+# ---- SAF-T grouping code list (Skatteetaten naeringsspesifikasjon) ----
+
+acctno:GroupingCodeList2025 a acctno:CodeList ;
+    acctno:codeListName "naeringsspesifikasjon" ;
+    acctno:incomeYear 2025 , 2026 ;
+    acctno:excludedCode "1296" , "1298" , "1299" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/saf-t/blob/05179521e435d82feb0b2d6c89a92a32a4f2d02f/Grouping%20Category%20Code%202025-2026/CSV/naeringsspesifikasjon.csv> ;
+    rdfs:label "Grouping code list for the business specification, income years 2025 and 2026"@en , "Grupperingskodeliste for næringsspesifikasjon, inntektsår 2025 og 2026"@no ;
+    rdfs:comment "The tax authority's SAF-T grouping codes for the business specification, one edition that covers income years 2025 and 2026. Only codes are carried."@en .
+
+# ---- Filing schema versions ----
+
+acctno:NaeringsspesifikasjonV6 a acctno:SchemaVersion ;
+    acctno:schemaName "naeringsspesifikasjon" ;
+    acctno:schemaVersion "6" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:naeringsspesifikasjon:ekstern:v6" ;
+    acctno:incomeYear 2025 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/naeringsspesifikasjon_v6_ekstern.xsd> ;
+    rdfs:label "Business specification schema, version 6"@en , "Næringsspesifikasjon, skjemaversjon 6"@no ;
+    rdfs:comment "Version 6 of the tax authority's business specification filing schema, used for income year 2025."@en .
+
+acctno:NaeringsspesifikasjonV7 a acctno:SchemaVersion ;
+    acctno:schemaName "naeringsspesifikasjon" ;
+    acctno:schemaVersion "7" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:naeringsspesifikasjon:ekstern:v7" ;
+    acctno:incomeYear 2026 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/naeringsspesifikasjon_v7_ekstern.xsd> ;
+    rdfs:label "Business specification schema, version 7"@en , "Næringsspesifikasjon, skjemaversjon 7"@no ;
+    rdfs:comment "Version 7 of the tax authority's business specification filing schema, used for income year 2026."@en .
+
+acctno:SkattemeldingUpersonligV5 a acctno:SchemaVersion ;
+    acctno:schemaName "skattemeldingUpersonlig" ;
+    acctno:schemaVersion "5" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:skattemelding:upersonlig:ekstern:v5" ;
+    acctno:incomeYear 2025 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/skattemeldingUpersonlig_v5_ekstern.xsd> ;
+    rdfs:label "Tax return, non-personal taxpayers schema, version 5"@en , "Skattemelding for upersonlige skattytere, skjemaversjon 5"@no ;
+    rdfs:comment "Version 5 of the tax authority's tax return, non-personal taxpayers filing schema, used for income year 2025."@en .
+
+acctno:SkattemeldingUpersonligV6 a acctno:SchemaVersion ;
+    acctno:schemaName "skattemeldingUpersonlig" ;
+    acctno:schemaVersion "6" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:skattemelding:upersonlig:ekstern:v6" ;
+    acctno:incomeYear 2026 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/skattemeldingUpersonlig_v6_ekstern.xsd> ;
+    rdfs:label "Tax return, non-personal taxpayers schema, version 6"@en , "Skattemelding for upersonlige skattytere, skjemaversjon 6"@no ;
+    rdfs:comment "Version 6 of the tax authority's tax return, non-personal taxpayers filing schema, used for income year 2026."@en .
+
+# ---- Schema element mappings (data elements, not concept matches) ----
+
+acctno:MapDepreciationGroupNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:depreciationGroup ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/saldogruppe" ;
+    rdfs:label "Mapping of depreciation group, Naeringsspesifikasjon v6"@en , "Kobling av saldogruppe, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps depreciation group to the element SaldoavskrevetAnleggsmiddel/saldogruppe in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapDepreciationGroupNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:depreciationGroup ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/saldogruppe" ;
+    rdfs:label "Mapping of depreciation group, Naeringsspesifikasjon v7"@en , "Kobling av saldogruppe, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps depreciation group to the element SaldoavskrevetAnleggsmiddel/saldogruppe in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapDepreciationRateNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:depreciationRate ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/avskrivningssats" ;
+    rdfs:label "Mapping of depreciation rate, Naeringsspesifikasjon v6"@en , "Kobling av avskrivningssats, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps depreciation rate to the element SaldoavskrevetAnleggsmiddel/avskrivningssats in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapDepreciationRateNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:depreciationRate ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/avskrivningssats" ;
+    rdfs:label "Mapping of depreciation rate, Naeringsspesifikasjon v7"@en , "Kobling av avskrivningssats, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps depreciation rate to the element SaldoavskrevetAnleggsmiddel/avskrivningssats in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapTaxValueNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:taxValue ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/utgaaendeVerdi" ;
+    acctno:openingSchemaElement "SaldoavskrevetAnleggsmiddel/inngaaendeVerdi" ;
+    rdfs:label "Mapping of tax value, Naeringsspesifikasjon v6"@en , "Kobling av skattemessig verdi, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps tax value to the element SaldoavskrevetAnleggsmiddel/utgaaendeVerdi in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapTaxValueNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:taxValue ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/utgaaendeVerdi" ;
+    acctno:openingSchemaElement "SaldoavskrevetAnleggsmiddel/inngaaendeVerdi" ;
+    rdfs:label "Mapping of tax value, Naeringsspesifikasjon v7"@en , "Kobling av skattemessig verdi, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps tax value to the element SaldoavskrevetAnleggsmiddel/utgaaendeVerdi in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapWealthValueSkattemeldingUpersonligV5 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:wealthValue ;
+    acctno:inSchema acctno:SkattemeldingUpersonligV5 ;
+    acctno:schemaElement "Formuesobjekt/formuesverdi" ;
+    rdfs:label "Mapping of wealth value, SkattemeldingUpersonlig v5"@en , "Kobling av formuesverdi, SkattemeldingUpersonlig v5"@no ;
+    rdfs:comment "Maps wealth value to the element Formuesobjekt/formuesverdi in the SkattemeldingUpersonlig version 5 schema."@en .
+
+acctno:MapWealthValueSkattemeldingUpersonligV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:wealthValue ;
+    acctno:inSchema acctno:SkattemeldingUpersonligV6 ;
+    acctno:schemaElement "Formuesobjekt/formuesverdi" ;
+    rdfs:label "Mapping of wealth value, SkattemeldingUpersonlig v6"@en , "Kobling av formuesverdi, SkattemeldingUpersonlig v6"@no ;
+    rdfs:comment "Maps wealth value to the element Formuesobjekt/formuesverdi in the SkattemeldingUpersonlig version 6 schema."@en .

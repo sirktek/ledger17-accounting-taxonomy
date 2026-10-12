@@ -105,4 +105,41 @@ class CodeListCoverageTest {
   void uncoveredYearThrows() {
     assertThrows(IllegalArgumentException.class, () -> T.norway().depreciationGroups(2019));
   }
+
+  @Test
+  void groupingListAgreesWithFixture() throws Exception {
+    Model m = T.model();
+    Resource list = m.createResource(ACCTNO + "GroupingCodeList2025");
+    assertEquals(Set.of("naeringsspesifikasjon"), strings(m, list, ACCTNO + "codeListName"));
+    assertEquals(Set.of("2025", "2026"), strings(m, list, ACCTNO + "incomeYear"));
+    Set<String> excluded = strings(m, list, ACCTNO + "excludedCode");
+    Set<String> modelled = new HashSet<>();
+    for (AssetTypeDef type : T.assetTypes()) {
+      modelled.addAll(T.norway().saft(type.code()).groupingCodes());
+    }
+    assertTrue(modelled.stream().noneMatch(excluded::contains), "modelled and excluded overlap");
+    Set<String> inRange = new HashSet<>();
+    Set<String> all = new HashSet<>();
+    for (String[] row : SaftReferenceTest.fixture()) {
+      all.add(row[1]);
+      if (T.norway().assetTypeForAccount(row[1]).isPresent()) {
+        inRange.add(row[1]);
+      }
+    }
+    Set<String> union = new HashSet<>(modelled);
+    union.addAll(excluded);
+    assertEquals(inRange, union);
+    assertTrue(all.containsAll(modelled));
+  }
+
+  @Test
+  void groupingFilingYearCoverageOnlyWarns() {
+    int filingYear = Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1;
+    if (!T.norway().coveredYears("naeringsspesifikasjon").contains(filingYear)) {
+      LOG.log(
+          System.Logger.Level.WARNING,
+          "No naeringsspesifikasjon grouping code list for income year {0}; add one to the Norway module",
+          filingYear);
+    }
+  }
 }

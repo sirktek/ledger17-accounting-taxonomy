@@ -39,3 +39,9 @@ Changed: accounting-no.ttl (SaldogruppeCodeList2025/2026 with identifier/version
 Verified: the five group test classes green; full `mvnq -q test` run also executed (see result in report). Coverage warning goes through System.Logger.
 Notes: NorwegianRules unchanged (depreciationGroups already works from the data). Skatte-ABC D-2 URL found from the live 2025 index page. 2026 list has no Skatte-ABC link (only a 2025 one exists in v1). The NO file now has statements about acct:taxValue/acct:DepreciationGroup/acct:Building (seeAlso, closeMatch), which are ignored by LabelsTest as they are core terms.
 Unverified: SAF-T grouping list fixture and SaftReferenceTest (later group).
+
+## Handoff: Group 7
+Changed: accounting-no.ttl (saftGroupingCode values per type; GroupingCodeList2025 incl. excludedCode 1296/1298/1299; SchemaVersion/SchemaElementMapping classes and properties; 4 SchemaVersion nodes; 8 mapping nodes `acctno:Map<Term><Schema>`); src/test/resources/saft/{naeringsspesifikasjon.csv,NOTICE} (saf-t commit 05179521e435d82feb0b2d6c89a92a32a4f2d02f); src/test/resources/xsd/{4 stripped XSDs,NOTICE}; tests SaftReferenceTest, SchemaElementTest (new), CodeListCoverageTest (grouping list + warning test).
+Verified: group tests green; `mvnq verify` green (58 tests).
+Notes: BankAccount codes are 1920 and 1950 only (no 1960 in the list; 1900 is outside any range). Spec line "each code also has inCodeList" cannot hold for literals; the GroupingCodeList carries the coverage instead (incomeYear 2025, 2026). Annotations stripped with a one-off lxml script (not committed); XSDs are re-serialised, so SHA-256 in NOTICE are of the originals.
+Unverified: none known; CI not run.

@@ -314,7 +314,7 @@ referenced):
 - `acctno:saftGroupingCategory` on each asset type.
 - `acctno:saftGroupingCode` (repeatable literals) lists every `naeringsspesifikasjon` code within the
   type's range, except 1296/1298/1299 (negative gain/loss, timber and agriculture accounts, not assets).
-  Each code also has `acctno:inCodeList`.
+  The codes are literals, so `acctno:GroupingCodeList2025` (incomeYear 2025, 2026) carries the year coverage.
 - Codes only, no description texts.
 - Later item: grouping code → saldogruppe defaults (1205→d, 1238→c, 1280→a, …).
 

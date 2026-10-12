@@ -87,10 +87,10 @@ Files: `src/main/resources/ontologies/accounting-no.ttl`, `src/main/java/<pkg>/{
 Tests: `mvnq -q test -Dtest='OntologySyntaxTest,CodeListCoverageTest,SaftReferenceTest,SchemaElementTest'`, then the
 full suite once: `mvnq verify`.
 
-- [ ] 7.1 SAF-T: from Skatteetaten/saf-t `Grouping Category Code 2025-2026/CSV/naeringsspesifikasjon.csv` write a codes-only fixture (`GroupingCategory;GroupingCode` for the two balance categories, no descriptions) to `src/test/resources/saft/` + NOTICE (source URL, SHA); add `acctno:GroupingCodeList2025` (covers 2025, 2026) and per asset type `saftGroupingCategory`, `saftGroupingCode` per D6; do not fetch or reference the General Ledger Standard Accounts (exclude 1296/1298/1299)
-- [ ] 7.2 Schema element mappings (D6): copy `naeringsspesifikasjon_v6/v7_ekstern.xsd` and `skattemeldingUpersonlig_v5/v6_ekstern.xsd` from Skatteetaten/skattemeldingen tag `v1.62.115` with all `xsd:annotation` stripped to `src/test/resources/xsd/` + NOTICE (Apache-2.0, tag, commit SHA, original SHA-256); add the four `acctno:SchemaVersion` nodes and the `SchemaElementMapping` nodes of the D6 table (classes and properties with en/no labels)
-- [ ] 7.3 Tests: extend `CodeListCoverageTest` with the `naeringsspesifikasjon` grouping list (same WARNING rule); `SaftReferenceTest`, `SchemaElementTest` per D9
-- [ ] 7.4 The group's tests green; then `mvnq verify` green (full suite), test output clean
+- [x] 7.1 SAF-T: from Skatteetaten/saf-t `Grouping Category Code 2025-2026/CSV/naeringsspesifikasjon.csv` write a codes-only fixture (`GroupingCategory;GroupingCode` for the two balance categories, no descriptions) to `src/test/resources/saft/` + NOTICE (source URL, SHA); add `acctno:GroupingCodeList2025` (covers 2025, 2026) and per asset type `saftGroupingCategory`, `saftGroupingCode` per D6; do not fetch or reference the General Ledger Standard Accounts (exclude 1296/1298/1299)
+- [x] 7.2 Schema element mappings (D6): copy `naeringsspesifikasjon_v6/v7_ekstern.xsd` and `skattemeldingUpersonlig_v5/v6_ekstern.xsd` from Skatteetaten/skattemeldingen tag `v1.62.115` with all `xsd:annotation` stripped to `src/test/resources/xsd/` + NOTICE (Apache-2.0, tag, commit SHA, original SHA-256); add the four `acctno:SchemaVersion` nodes and the `SchemaElementMapping` nodes of the D6 table (classes and properties with en/no labels)
+- [x] 7.3 Tests: extend `CodeListCoverageTest` with the `naeringsspesifikasjon` grouping list (same WARNING rule); `SaftReferenceTest`, `SchemaElementTest` per D9
+- [x] 7.4 The group's tests green; then `mvnq verify` green (full suite), test output clean
 
 ### Group 8: Docs
 
