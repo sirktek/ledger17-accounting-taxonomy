@@ -73,11 +73,11 @@ Files: `src/main/resources/ontologies/accounting-no.ttl`, `src/main/java/<pkg>/N
 `src/test/resources/kodeliste/`, `src/test/java/<pkg>/{CodeListCoverageTest,CapitalisationThresholdTest,DatakatalogLinkTest}.java`.
 Tests: `mvnq -q test -Dtest='OntologySyntaxTest,DepreciationGroupTest,CodeListCoverageTest,CapitalisationThresholdTest,DatakatalogLinkTest'`.
 
-- [ ] 6.1 Code lists: fetch `src/resources/kodeliste/{2025,2026}/{year}_saldogruppe.xml` from Skatteetaten/skattemeldingen (pin the commit SHA in the NOTICE), store under `src/test/resources/kodeliste/<year>/` with `NOTICE` (Apache-2.0, source URL, SHA); add `acctno:SaldogruppeCodeList2025`/`2026` (identifier, version, path, `rdfs:seeAlso`), `inCodeList` on a–j, `excludedCode "acd"`
-- [ ] 6.2 Datakatalog and reference pages: add the two `acct:Building skos:closeMatch` links (D6), and the D6 `rdfs:seeAlso` links to Skatteetaten pages (formuesskatt and avskrivningssatser rate pages, the buying-assets page) on the terms, plus Skatte-ABC 2025 D-2 on `acctno:SaldogruppeCodeList2025`; never `closeMatch`/`exactMatch` to a web page; comments in our own words
-- [ ] 6.3 Capitalisation threshold (sktl § 14-40): `acctno:capitalisationThreshold` and `acctno:minimumLifetimeYears` (range `xsd:integer`, en/no labels, `dct:source` § 14-40) on `SaldogruppeCodeList2025`/`2026` = 30000 / 3
-- [ ] 6.4 Tests: `CodeListCoverageTest` for `saldogruppe` (fixture agreement both ways; filing-year coverage `Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1` logs a WARNING and passes when missing; `depreciationGroups(2019)` throws), `CapitalisationThresholdTest`, `DatakatalogLinkTest` (no network, seeAlso links present, no web page as match target) per D9
-- [ ] 6.5 The group's tests green, output clean (a coverage WARNING is the only allowed log line)
+- [x] 6.1 Code lists: fetch `src/resources/kodeliste/{2025,2026}/{year}_saldogruppe.xml` from Skatteetaten/skattemeldingen (pin the commit SHA in the NOTICE), store under `src/test/resources/kodeliste/<year>/` with `NOTICE` (Apache-2.0, source URL, SHA); add `acctno:SaldogruppeCodeList2025`/`2026` (identifier, version, path, `rdfs:seeAlso`), `inCodeList` on a–j, `excludedCode "acd"`
+- [x] 6.2 Datakatalog and reference pages: add the two `acct:Building skos:closeMatch` links (D6), and the D6 `rdfs:seeAlso` links to Skatteetaten pages (formuesskatt and avskrivningssatser rate pages, the buying-assets page) on the terms, plus Skatte-ABC 2025 D-2 on `acctno:SaldogruppeCodeList2025`; never `closeMatch`/`exactMatch` to a web page; comments in our own words
+- [x] 6.3 Capitalisation threshold (sktl § 14-40): `acctno:capitalisationThreshold` and `acctno:minimumLifetimeYears` (range `xsd:integer`, en/no labels, `dct:source` § 14-40) on `SaldogruppeCodeList2025`/`2026` = 30000 / 3
+- [x] 6.4 Tests: `CodeListCoverageTest` for `saldogruppe` (fixture agreement both ways; filing-year coverage `Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1` logs a WARNING and passes when missing; `depreciationGroups(2019)` throws), `CapitalisationThresholdTest`, `DatakatalogLinkTest` (no network, seeAlso links present, no web page as match target) per D9
+- [x] 6.5 The group's tests green, output clean (a coverage WARNING is the only allowed log line)
 
 ### Group 7: SAF-T grouping codes and schema element mappings
 

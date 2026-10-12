@@ -297,6 +297,7 @@ acct:BankAccount acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" .
 
 acctno:DepreciationGroupA a acct:DepreciationGroup ;
     skos:notation "a" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 30.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Office machines and similar"@en , "Kontormaskiner og lignende"@no ;
@@ -304,6 +305,7 @@ acctno:DepreciationGroupA a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupB a acct:DepreciationGroup ;
     skos:notation "b" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 20.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Acquired goodwill"@en , "Ervervet goodwill"@no ;
@@ -311,6 +313,7 @@ acctno:DepreciationGroupB a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupC a acct:DepreciationGroup ;
     skos:notation "c" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 24.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Trucks, vans, machinery and plant"@en , "Lastebiler, varebiler, maskiner og anlegg"@no ;
@@ -318,6 +321,7 @@ acctno:DepreciationGroupC a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupD a acct:DepreciationGroup ;
     skos:notation "d" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 20.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Cars, tractors, machinery and fixtures"@en , "Personbiler, traktorer, maskiner og inventar"@no ;
@@ -325,6 +329,7 @@ acctno:DepreciationGroupD a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupE a acct:DepreciationGroup ;
     skos:notation "e" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 14.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Ships, vessels and rigs"@en , "Skip, fartøy og rigger"@no ;
@@ -332,6 +337,7 @@ acctno:DepreciationGroupE a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupF a acct:DepreciationGroup ;
     skos:notation "f" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 12.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Aircraft and helicopters"@en , "Fly og helikopter"@no ;
@@ -339,6 +345,7 @@ acctno:DepreciationGroupF a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupG a acct:DepreciationGroup ;
     skos:notation "g" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 5.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Power and telecom transmission installations"@en , "Overføringsanlegg for kraft og tele"@no ;
@@ -346,6 +353,7 @@ acctno:DepreciationGroupG a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupH a acct:DepreciationGroup ;
     skos:notation "h" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 4.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Buildings, structures and hotels"@en , "Bygg, anlegg og hoteller"@no ;
@@ -353,6 +361,7 @@ acctno:DepreciationGroupH a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupI a acct:DepreciationGroup ;
     skos:notation "i" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 2.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Commercial buildings"@en , "Forretningsbygg"@no ;
@@ -360,6 +369,7 @@ acctno:DepreciationGroupI a acct:DepreciationGroup ;
 
 acctno:DepreciationGroupJ a acct:DepreciationGroup ;
     skos:notation "j" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
     acctno:depreciationRate 10.0 ;
     dct:source "Skatteloven section 14-41 and section 14-43" ;
     rdfs:label "Technical installations in buildings"@en , "Tekniske installasjoner i bygg"@no ;
@@ -391,3 +401,48 @@ acctno:WealthValueShape a sh:NodeShape ;
                     <http://ledger17.com/ontology/accounting/no#wealthValuePerShare> ?perShare .
             }"""
     ] .
+
+# ---- Code lists (Skatteetaten saldogruppe, per income year) ----
+
+acctno:SaldogruppeCodeList2025 a acctno:CodeList ;
+    acctno:codeListName "saldogruppe" ;
+    acctno:incomeYear 2025 ;
+    acctno:codeListPath "/formuesOgInntektsskatt/skattemelding/2025_saldogruppe.xml" ;
+    acctno:codeListIdentifier "b5529efb-794b-4bbb-a24f-9d754b6eaf5c" ;
+    acctno:codeListVersion "1" ;
+    acctno:excludedCode "acd" ;
+    acctno:capitalisationThreshold 30000 ;
+    acctno:minimumLifetimeYears 3 ;
+    dct:source "Skatteloven section 14-40" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/skattemeldingen/blob/9784809838c8c910b494f91f03d25a7c4fe44a36/src/resources/kodeliste/2025/2025_saldogruppe.xml> ,
+        <https://www.skatteetaten.no/rettskilder/type/handboker/skatte-abc/2025/d-2-driftsmiddel--avskrivning-painntektsforing-av-saldo/> ;
+    rdfs:label "Depreciation group code list, income year 2025"@en , "Kodeliste for saldogrupper, inntektsår 2025"@no ;
+    rdfs:comment "The tax authority's list of depreciation group codes for income year 2025. The combined code acd is left out of this vocabulary on purpose."@en .
+
+acctno:SaldogruppeCodeList2026 a acctno:CodeList ;
+    acctno:codeListName "saldogruppe" ;
+    acctno:incomeYear 2026 ;
+    acctno:codeListPath "/formuesOgInntektsskatt/skattemelding/2026_saldogruppe.xml" ;
+    acctno:codeListIdentifier "1fd894a9-4baa-4a18-995f-1f549e3221c0" ;
+    acctno:codeListVersion "1" ;
+    acctno:excludedCode "acd" ;
+    acctno:capitalisationThreshold 30000 ;
+    acctno:minimumLifetimeYears 3 ;
+    dct:source "Skatteloven section 14-40" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/skattemeldingen/blob/9784809838c8c910b494f91f03d25a7c4fe44a36/src/resources/kodeliste/2026/2026_saldogruppe.xml> ;
+    rdfs:label "Depreciation group code list, income year 2026"@en , "Kodeliste for saldogrupper, inntektsår 2026"@no ;
+    rdfs:comment "The tax authority's list of depreciation group codes for income year 2026. The combined code acd is left out of this vocabulary on purpose."@en .
+
+# ---- Datakatalog concepts and reference pages ----
+
+acct:Building skos:closeMatch
+    <https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd0b-2964-11e6-b2bc-96405985e0fa> ,
+    <https://data.skatteetaten.no/web/datakatalog/begrep/41b9c8b8-973b-11e9-bed2-005056821322> .
+
+acctno:wealthValue rdfs:seeAlso <https://www.skatteetaten.no/satser/formuesskatt/> .
+acctno:wealthValueDefault rdfs:seeAlso <https://www.skatteetaten.no/satser/formuesskatt/> .
+acct:DepreciationGroup rdfs:seeAlso <https://www.skatteetaten.no/satser/avskrivningssatser/> .
+acctno:depreciationRate rdfs:seeAlso <https://www.skatteetaten.no/satser/avskrivningssatser/> .
+acct:taxValue rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+acctno:capitalisationThreshold rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+acctno:minimumLifetimeYears rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .

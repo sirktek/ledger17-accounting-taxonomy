@@ -55,4 +55,17 @@ class DepreciationGroupTest {
   void uncoveredYearThrows() {
     assertThrows(IllegalArgumentException.class, () -> T.norway().depreciationGroups(2019));
   }
+
+  @Test
+  void codeListYearsReturnGroupsAToJ() {
+    int[] rates = {30, 20, 24, 20, 14, 12, 5, 4, 2, 10};
+    for (int year : new int[] {2025, 2026}) {
+      var groups = T.norway().depreciationGroups(year);
+      assertEquals(10, groups.size(), "year " + year);
+      for (int i = 0; i < 10; i++) {
+        assertEquals(String.valueOf((char) ('a' + i)), groups.get(i).notation());
+        assertEquals(0, groups.get(i).rate().compareTo(BigDecimal.valueOf(rates[i])));
+      }
+    }
+  }
 }

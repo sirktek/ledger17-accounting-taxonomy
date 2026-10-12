@@ -33,3 +33,9 @@ Unverified/deferred to group 6: `depreciationGroups(year)` returning a-j for 202
 ## Handoff: Group 5 fix (messageNo)
 - Declared `acct:messageNo` (rdf:Property, range rdf:langString, en/no labels, en comment, no domain) in accounting-core.ttl; replaced all `rdfs:comment ...@no` shape messages with `acct:messageNo` in core (8) and no (2); each shape keeps one `sh:message @en`.
 - Added `ShaclTest.messagesInBothLanguages`; the listed test classes were run (see result in report).
+
+## Handoff: Group 6
+Changed: accounting-no.ttl (SaldogruppeCodeList2025/2026 with identifier/version/path/excludedCode "acd"/threshold 30000 and lifetime 3/dct:source 14-40/seeAlso; inCodeList on groups a-j; Building closeMatch x2; reference-page seeAlso links; Skatte-ABC 2025 D-2 on the 2025 list); src/test/resources/kodeliste/{NOTICE,2025,2026} (fixtures pinned to skattemeldingen commit 9784809838c8c910b494f91f03d25a7c4fe44a36, SHA-256 in NOTICE); tests CodeListCoverageTest, CapitalisationThresholdTest, DatakatalogLinkTest; DepreciationGroupTest gained codeListYearsReturnGroupsAToJ.
+Verified: the five group test classes green; full `mvnq -q test` run also executed (see result in report). Coverage warning goes through System.Logger.
+Notes: NorwegianRules unchanged (depreciationGroups already works from the data). Skatte-ABC D-2 URL found from the live 2025 index page. 2026 list has no Skatte-ABC link (only a 2025 one exists in v1). The NO file now has statements about acct:taxValue/acct:DepreciationGroup/acct:Building (seeAlso, closeMatch), which are ignored by LabelsTest as they are core terms.
+Unverified: SAF-T grouping list fixture and SaftReferenceTest (later group).
