@@ -51,10 +51,10 @@ Files: `src/main/java/<pkg>/` (`AccountNumbers`, `AccountRange`, `AccountTypeDef
 `DepreciationGroupDef`, `SaftReference`, `AccountingTaxonomy`, `NorwegianRules`, `package-info.java`).
 Tests: `mvnq -q compile`; `mvnq -q test -Dtest=OntologySyntaxTest`.
 
-- [ ] 4.1 `AccountNumbers` (isValid, accountGroup, accountClass); records `AccountRange` (`contains`), `AccountTypeDef`, `AssetTypeDef`, `PropertyDef`, `DepreciationGroupDef`, `SaftReference` per D8
-- [ ] 4.2 `AccountingTaxonomy`: constants, `load(Set<String>)` with module registry `{NO → NO_RESOURCE}`, IllegalArgumentException/IllegalStateException per spec, `jurisdictions()`, `model()`
-- [ ] 4.3 `assetTypes()`, `assetType(code)`, `accountTypes()`, `accountTypesForAccount(String)`, `assetTypeForAccount(String)`, `properties()` (excludes annotations), `property(localName)`, `appliesTo`
-- [ ] 4.4 `NorwegianRules` per D8 (`depreciationGroups(year)` filters by `inCodeList`; uncovered year → IllegalArgumentException); javadoc on public types; compile passes
+- [x] 4.1 `AccountNumbers` (isValid, accountGroup, accountClass); records `AccountRange` (`contains`), `AccountTypeDef`, `AssetTypeDef`, `PropertyDef`, `DepreciationGroupDef`, `SaftReference` per D8
+- [x] 4.2 `AccountingTaxonomy`: constants, `load(Set<String>)` with module registry `{NO → NO_RESOURCE}`, IllegalArgumentException/IllegalStateException per spec, `jurisdictions()`, `model()`
+- [x] 4.3 `assetTypes()`, `assetType(code)`, `accountTypes()`, `accountTypesForAccount(String)`, `assetTypeForAccount(String)`, `properties()` (excludes annotations), `property(localName)`, `appliesTo`
+- [x] 4.4 `NorwegianRules` per D8 (`depreciationGroups(year)` filters by `inCodeList`; uncovered year → IllegalArgumentException); javadoc on public types; compile passes
 
 ### Group 5: Core and API tests
 
