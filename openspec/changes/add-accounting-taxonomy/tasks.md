@@ -52,14 +52,13 @@ third-party trademark in any name; `NamingTest`'s forbidden tokens must not matc
 - [ ] 6.3 Datakatalog and reference pages: add the two `acct:Building skos:closeMatch` links (D6), and the D6 `rdfs:seeAlso` links to Skatteetaten pages (formuesskatt and avskrivningssatser rate pages, the buying-assets page) on the terms, plus Skatte-ABC 2025 D-2 on `acctno:SaldogruppeCodeList2025`; never `closeMatch`/`exactMatch` to a web page; comments in our own words
 - [ ] 6.3a Capitalisation threshold (sktl § 14-40): `acctno:capitalisationThreshold` and `acctno:minimumLifetimeYears` (range `xsd:integer`, en/no labels, `dct:source` § 14-40) on `SaldogruppeCodeList2025`/`2026` = 30000 / 3; `CapitalisationThresholdTest` per D9
 - [ ] 6.3b Schema element mappings (D6): copy `naeringsspesifikasjon_v6/v7_ekstern.xsd` and `skattemeldingUpersonlig_v5/v6_ekstern.xsd` from Skatteetaten/skattemeldingen tag `v1.62.115` with all `xsd:annotation` stripped to `src/test/resources/xsd/` + NOTICE (Apache-2.0, tag, commit SHA, original SHA-256); add the four `acctno:SchemaVersion` nodes and the `SchemaElementMapping` nodes of the D6 table (classes and properties with en/no labels); `SchemaElementTest` per D9
-- [ ] 6.4 Tests: `CodeListCoverageTest` (fixture agreement both ways; filing-year coverage `Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1` for `saldogruppe` and `naeringsspesifikasjon`; `depreciationGroups(2019)` throws), `SaftReferenceTest`, `DatakatalogLinkTest` (no network, seeAlso links present, no web page as match target)
+- [ ] 6.4 Tests: `CodeListCoverageTest` (fixture agreement both ways; filing-year coverage `Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1` for `saldogruppe` and `naeringsspesifikasjon` logs a WARNING and passes when missing; `depreciationGroups(2019)` throws), `SaftReferenceTest`, `DatakatalogLinkTest` (no network, seeAlso links present, no web page as match target)
 - [ ] 6.5 `mvnq verify` green (full suite), test output clean
 
 ## 7. Docs and release
 
 - [ ] 7.1 README: purpose and ownership (ledger17 domain knowledge, hosted in the sirktek org), modules and namespaces (D2) with the modules-vs-tags rationale, term tables (D4–D6), value semantics, code-list year policy (how to add a year when the coverage test fails), Maven coordinates and the GitHub Packages repository + `read:packages` token requirement, Java API example (`load(Set.of("NO"))`), consumer mapping (D7), refinement policy (`skos:broader`, codes frozen), not-in-scope list (VAT, non-asset transactions, IFRS links later), attribution for Skatteetaten sources; no third-party trademarks as names
 - [ ] 7.2 README "Adopting": Maven dependency, `AccountingTaxonomy.load(Set.of("NO")).model()` example, Jena 5.5 requirement
-- [ ] 7.3 Resolve design.md open questions before the first release
 
 ## Follow-up changes (other repos, not tasks here)
 

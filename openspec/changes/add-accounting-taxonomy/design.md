@@ -494,10 +494,11 @@ Nothing else: no service layer and no Sirk-style generic `PropertyDefinition`.
   - every `acctno:CodeList` has a fixture, and its identifier and version match;
   - every fixture code is a group notation with `inCodeList` for that year, or an `excludedCode`, and
     the reverse;
-  - **year coverage:** the build fails when income year `Year.now(Europe/Oslo) - 1` (the year being
-    filed) has no `saldogruppe` or grouping code list, and `depreciationGroups(2019)` throws. This is
-    deliberately time-dependent: it turns "Skatteetaten published a new year" into a red build instead
-    of a silent gap.
+  - **year coverage:** when income year `Year.now(Europe/Oslo) - 1` (the year being filed) has no
+    `saldogruppe` or grouping code list, the test logs a WARNING naming the missing year and passes.
+    A missing year must never fail the build: from 1 January every unrelated build and hotfix release
+    would be blocked until the new lists are added. `depreciationGroups(2019)` throws (that part is
+    not time-dependent and does fail).
 - `SaftReferenceTest`:
   - every grouping code on a type is in the fixture and inside that type's range;
   - every fixture code in a balance category inside a range is listed, except 1296/1298/1299.
@@ -556,5 +557,5 @@ adopts with no data migration. Sirk removes its copies only after adopting this 
 
 ## Open Questions
 
-1. **Equipment label.** Recommend `@no` "Utstyr og kjøretøy" / `@en` "Equipment and vehicles" (ledger17
-   UI: "Utstyr/kjøretøy").
+None. Resolved: the Equipment label is `@no` "Utstyr og kjøretøy" / `@en` "Equipment and vehicles";
+a missing filing year is a warning, not a build failure.

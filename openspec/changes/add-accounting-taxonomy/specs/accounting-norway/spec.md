@@ -70,7 +70,8 @@ and the SAF-T `naeringsspesifikasjon` grouping list for 2025 and 2026.
 
 #### Scenario: Filing year not covered
 - **WHEN** the tests run and income year (current year in Europe/Oslo − 1) has no `saldogruppe` code list
-- **THEN** the build fails
+- **THEN** the test logs a warning naming the missing income year
+- **AND** the build does not fail
 
 ### Requirement: SAF-T grouping codes
 Each asset type SHALL carry, in the Norway module, `acctno:saftGroupingCategory` and `acctno:saftGroupingCode` values listing every
