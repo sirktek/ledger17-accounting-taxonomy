@@ -103,7 +103,7 @@ one in `@no`, and an `rdfs:comment` in `@en` stating what the value means.
 - **THEN** each has one `@en` label, one `@no` label and an `@en` comment
 
 ### Requirement: Core SHACL shape
-The core module SHALL define `acct:AssetShape` (targets subjects of `acct:assetType`): exactly one
+The core module SHALL define `acct:AssetShape` (targets `acct:Asset` and subjects of `acct:assetType`, `ledgerAccount`, `accountGroup`, `accountClass`, `disposedAt` and `valuations`): exactly one
 `assetType` in `acct:AssetType`, `disposedAt` of datatype `xsd:date`; and `acct:AssetValuationShape`
 (targets `acct:AssetValuation`): exactly one integer `year`. Every constraint SHALL carry exactly one
 `sh:message` in `@en` and exactly one `acct:messageNo` (an annotation property declared in the core module)

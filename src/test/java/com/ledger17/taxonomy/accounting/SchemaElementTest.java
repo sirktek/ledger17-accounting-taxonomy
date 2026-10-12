@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.InputStream;
 import java.time.Year;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,13 +20,13 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 class SchemaElementTest {
-  private static final System.Logger LOG = System.getLogger(SchemaElementTest.class.getName());
   private static final String XSD = "http://www.w3.org/2001/XMLSchema";
   private static final String SKOS = "http://www.w3.org/2004/02/skos/core#";
   private static final Pattern FILE = Pattern.compile("/([^/]+\\.xsd)$");
@@ -78,16 +80,46 @@ class SchemaElementTest {
     if (ct == null) {
       return false;
     }
-    NodeList els = ct.getElementsByTagNameNS(XSD, "element");
-    for (int i = 0; i < els.getLength(); i++) {
-      if (element.equals(((Element) els.item(i)).getAttribute("name"))) {
-        return true;
+    if (declaresIn(ct, element)) {
+      return true;
+    }
+    for (Element c : children(ct)) {
+      if ("complexContent".equals(c.getLocalName())) {
+        for (Element ext : children(c)) {
+          if ("extension".equals(ext.getLocalName())) {
+            if (declaresIn(ext, element)) {
+              return true;
+            }
+            String base = ext.getAttribute("base");
+            base = base.substring(base.indexOf(':') + 1);
+            if (declares(d, base, element)) {
+              return true;
+            }
+          }
+        }
       }
     }
-    NodeList ext = ct.getElementsByTagNameNS(XSD, "extension");
-    for (int i = 0; i < ext.getLength(); i++) {
-      String base = ((Element) ext.item(i)).getAttribute("base");
-      if (declares(d, base, element)) {
+    return false;
+  }
+
+  private static java.util.List<Element> children(Element e) {
+    java.util.List<Element> out = new java.util.ArrayList<>();
+    for (org.w3c.dom.Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
+      if (n instanceof Element c && XSD.equals(c.getNamespaceURI())) {
+        out.add(c);
+      }
+    }
+    return out;
+  }
+
+  /** Looks at direct sequence/choice/all particles only, never into nested types. */
+  private static boolean declaresIn(Element parent, String element) {
+    for (Element c : children(parent)) {
+      String n = c.getLocalName();
+      if ("element".equals(n) && element.equals(c.getAttribute("name"))) {
+        return true;
+      }
+      if (("sequence".equals(n) || "choice".equals(n) || "all".equals(n)) && declaresIn(c, element)) {
         return true;
       }
     }
@@ -191,18 +223,21 @@ class SchemaElementTest {
   }
 
   @Test
-  void filingYearCoverageOnlyWarns() {
+  void filingYearCoverageSkipsWhenUncovered() {
     int filingYear = Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1;
+    for (String schema : new String[] {"naeringsspesifikasjon", "skattemeldingUpersonlig"}) {
+      Set<Integer> years = new HashSet<>();
+      versions().values().stream().filter(v -> schema.equals(str(v.node, "schemaName"))).forEach(v -> years.add(v.year));
+      assertTrue(years.containsAll(Set.of(2025, 2026)), schema + " covers " + years);
+    }
+    List<String> missing = new ArrayList<>();
     for (String schema : new String[] {"naeringsspesifikasjon", "skattemeldingUpersonlig"}) {
       boolean covered =
           versions().values().stream().anyMatch(v -> schema.equals(str(v.node, "schemaName")) && v.year == filingYear);
       if (!covered) {
-        LOG.log(
-            System.Logger.Level.WARNING,
-            "No {0} schema version for income year {1}; add one to the Norway module",
-            schema,
-            filingYear);
+        missing.add(schema);
       }
     }
+    Assumptions.assumeTrue(missing.isEmpty(), "No schema version for income year " + filingYear + ": " + missing);
   }
 }

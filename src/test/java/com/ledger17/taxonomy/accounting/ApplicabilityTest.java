@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Set;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.jupiter.api.Test;
 
 class ApplicabilityTest {
@@ -24,6 +29,37 @@ class ApplicabilityTest {
     check("taxValue", Set.of("INTANGIBLE", "BUILDING", "EQUIPMENT", "FINANCIAL_FIXED_ASSET", "FINANCIAL_INSTRUMENTS"));
     for (String p : List.of("assetType", "disposedAt", "valuations", "ledgerAccount", "year", "bookValue")) {
       check(p, Set.copyOf(ALL));
+    }
+  }
+
+  @Test
+  void localNamesAreUniqueAcrossModules() {
+    for (Set<String> set : List.of(Set.<String>of(), Set.of("NO"))) {
+      List<String> names =
+          AccountingTaxonomy.load(set).properties().stream().map(PropertyDef::name).toList();
+      assertEquals(names.size(), Set.copyOf(names).size(), "duplicate local names for " + set + ": " + names);
+    }
+  }
+
+  @Test
+  void duplicateLocalNameAcrossModulesIsRejected() {
+    Model model = ModelFactory.createDefaultModel();
+    for (String ns : List.of(AccountingTaxonomy.CORE_NAMESPACE, AccountingTaxonomy.NO_NAMESPACE)) {
+      Resource x = model.createResource(ns + "x");
+      model.add(x, RDF.type, RDF.Property);
+      model.add(x, RDFS.domain, model.createResource(AccountingTaxonomy.CORE_NAMESPACE + "Asset"));
+    }
+    IllegalStateException e =
+        assertThrows(IllegalStateException.class, () -> new AccountingTaxonomy(model, Set.of()));
+    assertTrue(e.getMessage().contains("x"), e.getMessage());
+  }
+
+  @Test
+  void unknownOrNullAssetTypeNeverApplies() {
+    // taxValue is restricted, year is unrestricted
+    for (String p : List.of("taxValue", "year")) {
+      assertFalse(T.appliesTo(p, "NO_SUCH_TYPE"), p);
+      assertFalse(T.appliesTo(p, null), p);
     }
   }
 

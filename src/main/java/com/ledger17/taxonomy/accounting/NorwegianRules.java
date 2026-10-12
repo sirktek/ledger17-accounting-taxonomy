@@ -7,6 +7,8 @@ import static com.ledger17.taxonomy.accounting.AccountingTaxonomy.SKOS;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,14 +23,22 @@ public final class NorwegianRules {
 
   private final AccountingTaxonomy t;
 
+  private final Map<String, List<AccountRange>> assetRanges = new HashMap<>();
+  private final Map<String, List<AccountRange>> accountTypeRanges = new HashMap<>();
+
   NorwegianRules(AccountingTaxonomy taxonomy) {
     this.t = taxonomy;
+    for (Map.Entry<String, Resource> e : t.assetTypeResources().entrySet()) {
+      assetRanges.put(e.getKey(), List.copyOf(ranges(e.getValue())));
+    }
+    for (AccountTypeDef d : t.accountTypes()) {
+      accountTypeRanges.put(d.uri(), List.copyOf(ranges(t.res(d.uri()))));
+    }
   }
 
   /** The account ranges of an asset type; empty if the code is unknown. */
   public List<AccountRange> accountRanges(String assetTypeCode) {
-    Resource r = t.assetTypeResources().get(assetTypeCode);
-    return r == null ? List.of() : ranges(r);
+    return assetRanges.getOrDefault(assetTypeCode, List.of());
   }
 
   /** The asset type whose ranges contain the account, if any. */
@@ -47,7 +57,7 @@ public final class NorwegianRules {
   public List<AccountTypeDef> accountTypesForAccount(String account) {
     List<AccountTypeDef> result = new ArrayList<>();
     for (AccountTypeDef d : t.accountTypes()) {
-      if (ranges(t.res(d.uri())).stream().anyMatch(r -> r.contains(account))) {
+      if (accountTypeRanges.get(d.uri()).stream().anyMatch(r -> r.contains(account))) {
         result.add(d);
       }
     }

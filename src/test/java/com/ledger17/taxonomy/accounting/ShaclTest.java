@@ -86,6 +86,27 @@ class ShaclTest {
   }
 
   @Test
+  void assetWithoutAssetTypeIsViolation() {
+    Model d = ModelFactory.createDefaultModel();
+    d.createResource("urn:test:asset")
+        .addProperty(d.createProperty(ACCT + "ledgerAccount"), "12050")
+        .addProperty(d.createProperty(ACCT + "disposedAt"), "not a date");
+    Model all = ModelFactory.createUnion(CORE, d);
+    var report = ShaclValidator.get().validate(Shapes.parse(CORE.getGraph()), all.getGraph());
+    assertFalse(report.conforms());
+    var paths = report.getEntries().stream().map(e -> String.valueOf(e.resultPath())).toList();
+    assertTrue(paths.stream().anyMatch(x -> x.contains("assetType")), paths.toString());
+    assertTrue(paths.stream().anyMatch(x -> x.contains("ledgerAccount")), paths.toString());
+    assertTrue(paths.stream().anyMatch(x -> x.contains("disposedAt")), paths.toString());
+    assertTrue(report.getEntries().stream().anyMatch(e -> e.message() != null
+        && e.message().contains("exactly one asset type")));
+
+    Model typed = ModelFactory.createDefaultModel();
+    typed.createResource("urn:test:asset2").addProperty(RDF.type, typed.createResource(ACCT + "Asset"));
+    assertFalse(conforms(CORE, typed));
+  }
+
+  @Test
   void valuationWithoutYear() {
     Model d = ModelFactory.createDefaultModel();
     d.createResource("urn:test:valuation").addProperty(RDF.type, d.createResource(ACCT + "AssetValuation"));

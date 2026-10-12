@@ -104,3 +104,22 @@ Tests: `mvnq -q test -Dtest=NamingTest` (README must not trip the naming rule if
 
 - **ledger17:** depend on the artifact and map asset types to tax-return object types per year.
 - **Sirk:** consumes the artifact through typed fields, not generic properties.
+
+## Fix pass: shapes and NO annotations (F4, F9)
+- Fixed: F4 — accounting-core.ttl AssetShape — now targets acct:Asset instances and subjects of assetType, ledgerAccount, accountGroup, accountClass, disposedAt, valuations
+- Fixed: F9 — accounting-no.ttl:27 — FiscalYear Norwegian rule moved from rdfs:comment to skos:scopeNote (no other core term gets rdfs:comment/label from NO); design.md and norway spec do not describe this annotation, unchanged
+- Tests added: ShaclTest.assetWithoutAssetTypeIsViolation, LabelsTest.mergedCoreAndNoKeepOneCommentPerLanguageOnCoreTerms
+- Tests run: ShaclTest, LabelsTest, OntologySyntaxTest, CarryOverTest, DatakatalogLinkTest, SaftReferenceTest — 22 pass
+- Unverified: tests were written together with the fix, not run red first
+
+## Fix pass: coverage tests, schema walk, syntax gate
+- Fixed: F1 — specs/accounting-norway/spec.md, design.md D6 — SAF-T grouping list documented as one node for 2025+2026 with no path/identifier/version and literal codes without inCodeList; CodeListCoverageTest asserts that shape.
+- Fixed: F3 — CodeListCoverageTest, SchemaElementTest, design.md Risks/D9, spec.md — coverage tests use Assumptions.assumeTrue (skipped with message), plus positive assertion that 2025 and 2026 are covered; wording changed from "logs a warning" to "reported as skipped".
+- Fixed: F5 — OntologySyntaxTest — asserts accounting-core.ttl and accounting-no.ttl are found and every model is non-empty.
+- Fixed: F8 — SchemaElementTest — declares() walks only direct sequence/choice/all particles and complexContent/extension, strips QName prefix from base; all 8 mappings still resolve.
+- Tests run: CodeListCoverageTest, SchemaElementTest, OntologySyntaxTest — 12 pass, 0 skipped.
+- Unverified: skip behaviour in a year with no coverage (not simulated).
+
+## Fix pass 2
+- Fixed: AssetShape targets text (spec.md, no D4 note existed in design.md); skipped-test wording (README.md:153, design.md:566); SchemaElementTest collects all missing schemas before one assumeTrue; load() javadoc names duplicate-local-name; tests renamed to ...SkipsWhenUncovered; duplicate-local-name test added in ApplicabilityTest (AccountingTaxonomy constructor made package-private).
+- Note: tasks 6.4/6.5/7.3 above still say "WARNING" historically; behaviour is now a skipped test.

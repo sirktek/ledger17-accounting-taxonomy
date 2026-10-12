@@ -39,4 +39,23 @@ class LabelsTest {
       assertTrue(checked > 10, res);
     }
   }
+
+  @Test
+  void mergedCoreAndNoKeepOneCommentPerLanguageOnCoreTerms() {
+    Model core = TestSupport.file("/ontologies/accounting-core.ttl");
+    Model merged = TestSupport.file("/ontologies/accounting-core.ttl").add(TestSupport.file("/ontologies/accounting-no.ttl"));
+    int checked = 0;
+    for (Resource s : core.listSubjectsWithProperty(RDFS.comment).toList()) {
+      if (!s.isURIResource()) {
+        continue;
+      }
+      checked++;
+      for (String lang : List.of("en", "no")) {
+        assertEquals(count(core, s, RDFS.comment, lang), count(merged, s, RDFS.comment, lang), s + " " + lang);
+        assertTrue(count(merged, s, RDFS.comment, lang) <= 1, s + " " + lang);
+      }
+      assertEquals(1, count(merged, s, RDFS.comment, "en"), s.toString());
+    }
+    assertTrue(checked > 10);
+  }
 }

@@ -1,6 +1,7 @@
 package com.ledger17.taxonomy.accounting;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,8 +22,13 @@ class OntologySyntaxTest {
         try (Stream<Path> s = Files.walk(dir)) {
             files = s.filter(p -> p.toString().endsWith(".ttl")).toList();
         }
+        List<String> names = files.stream().map(p -> p.getFileName().toString()).toList();
+        assertTrue(names.contains("accounting-core.ttl"), "found " + names);
+        assertTrue(names.contains("accounting-no.ttl"), "found " + names);
         for (Path f : files) {
-            assertDoesNotThrow(() -> RDFDataMgr.loadModel(f.toUri().toString()), "Syntax error in " + f);
+            org.apache.jena.rdf.model.Model m =
+                assertDoesNotThrow(() -> RDFDataMgr.loadModel(f.toUri().toString()), "Syntax error in " + f);
+            assertTrue(m.size() > 0, "empty model " + f);
         }
     }
 }

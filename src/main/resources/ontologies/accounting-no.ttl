@@ -24,7 +24,7 @@
 
 # ---- Statements about core terms ----
 
-acct:FiscalYear rdfs:comment "In Norway the fiscal year is the calendar year, from 1 January to 31 December (regnskapsloven section 1-7)."@en .
+acct:FiscalYear skos:scopeNote "In Norway the fiscal year is the calendar year, from 1 January to 31 December (regnskapsloven section 1-7)."@en .
 
 # ---- Classes ----
 

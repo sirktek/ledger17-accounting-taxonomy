@@ -3,6 +3,7 @@ package com.ledger17.taxonomy.accounting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,12 +34,14 @@ public final class AccountingTaxonomy {
   public static final String CORE_RESOURCE = "/ontologies/accounting-core.ttl";
   /** Classpath resource of the Norway module. */
   public static final String NO_RESOURCE = "/ontologies/accounting-no.ttl";
+  private static final Map<String, Module> MODULES = Map.of("NO", new Module(NO_NAMESPACE, NO_RESOURCE));
   /** Supported jurisdictions, ISO 3166-1 alpha-2. */
-  public static final Set<String> SUPPORTED_JURISDICTIONS = Set.of("NO");
+  public static final Set<String> SUPPORTED_JURISDICTIONS = Set.copyOf(MODULES.keySet());
 
   static final String SKOS = "http://www.w3.org/2004/02/skos/core#";
 
-  private static final Map<String, String> MODULES = Map.of("NO", NO_RESOURCE);
+  private record Module(String namespace, String resource) {}
+
   private static final List<String> ASSET_TYPE_ORDER =
       List.of(
           "INTANGIBLE",
@@ -59,10 +62,34 @@ public final class AccountingTaxonomy {
   final Model model;
   private final Set<String> jurisdictions;
   private final NorwegianRules norway;
+  private final Map<String, Resource> assetTypeResources;
+  private final List<AssetTypeDef> assetTypes;
+  private final Map<String, AssetTypeDef> assetTypesByCode;
+  private final List<AccountTypeDef> accountTypes;
+  private final List<PropertyDef> properties;
+  private final Map<String, PropertyDef> propertiesByName;
 
-  private AccountingTaxonomy(Model model, Set<String> jurisdictions) {
+  AccountingTaxonomy(Model model, Set<String> jurisdictions) {
     this.model = model;
     this.jurisdictions = jurisdictions;
+    this.assetTypeResources = scanAssetTypeResources();
+    this.assetTypes = scanAssetTypes();
+    Map<String, AssetTypeDef> byCode = new LinkedHashMap<>();
+    for (AssetTypeDef d : assetTypes) {
+      byCode.put(d.code(), d);
+    }
+    this.assetTypesByCode = Collections.unmodifiableMap(byCode);
+    this.accountTypes = scanAccountTypes();
+    this.properties = scanProperties();
+    Map<String, PropertyDef> byName = new LinkedHashMap<>();
+    for (PropertyDef p : properties) {
+      PropertyDef previous = byName.put(p.name(), p);
+      if (previous != null) {
+        throw new IllegalStateException(
+            "Duplicate property local name " + p.name() + ": " + previous.uri() + " and " + p.uri());
+      }
+    }
+    this.propertiesByName = Collections.unmodifiableMap(byName);
     this.norway = jurisdictions.contains("NO") ? new NorwegianRules(this) : null;
   }
 
@@ -70,7 +97,8 @@ public final class AccountingTaxonomy {
    * Loads core plus the module of each jurisdiction. An empty set loads core only.
    *
    * @throws IllegalArgumentException for a null, lowercase or unknown code
-   * @throws IllegalStateException if a resource is missing or cannot be parsed
+   * @throws IllegalStateException if a resource is missing or cannot be parsed, or if two loaded
+   *     modules define a property with the same local name
    */
   public static AccountingTaxonomy load(Set<String> jurisdictions) {
     if (jurisdictions == null) {
@@ -84,7 +112,7 @@ public final class AccountingTaxonomy {
     Model model = ModelFactory.createDefaultModel();
     read(model, CORE_RESOURCE);
     for (String code : new TreeSet<>(jurisdictions)) {
-      read(model, MODULES.get(code));
+      read(model, MODULES.get(code).resource());
     }
     return new AccountingTaxonomy(model, Set.copyOf(jurisdictions));
   }
@@ -122,6 +150,10 @@ public final class AccountingTaxonomy {
 
   /** Asset types in design order. */
   public List<AssetTypeDef> assetTypes() {
+    return assetTypes;
+  }
+
+  private List<AssetTypeDef> scanAssetTypes() {
     List<AssetTypeDef> result = new ArrayList<>();
     for (Resource r : model.listSubjectsWithProperty(RDF.type, res(CORE_NAMESPACE + "AssetType")).toList()) {
       result.add(assetTypeDef(r));
@@ -134,11 +166,15 @@ public final class AccountingTaxonomy {
 
   /** The asset type with the given notation. */
   public Optional<AssetTypeDef> assetType(String code) {
-    return assetTypes().stream().filter(d -> d.code().equals(code)).findFirst();
+    return Optional.ofNullable(assetTypesByCode.get(code));
   }
 
   /** Account types in design order, with their broader type. */
   public List<AccountTypeDef> accountTypes() {
+    return accountTypes;
+  }
+
+  private List<AccountTypeDef> scanAccountTypes() {
     List<AccountTypeDef> result = new ArrayList<>();
     for (Resource r : model.listSubjectsWithProperty(RDF.type, res(CORE_NAMESPACE + "AccountType")).toList()) {
       Resource broader = resource(r, SKOS + "broader");
@@ -154,6 +190,10 @@ public final class AccountingTaxonomy {
 
   /** Properties declared on assets or valuations in the loaded modules (annotations excluded). */
   public List<PropertyDef> properties() {
+    return properties;
+  }
+
+  private List<PropertyDef> scanProperties() {
     Resource asset = res(CORE_NAMESPACE + "Asset");
     Resource valuation = res(CORE_NAMESPACE + "AssetValuation");
     List<PropertyDef> result = new ArrayList<>();
@@ -169,11 +209,14 @@ public final class AccountingTaxonomy {
 
   /** The property with the given local name across loaded modules. */
   public Optional<PropertyDef> property(String localName) {
-    return properties().stream().filter(p -> p.name().equals(localName)).findFirst();
+    return Optional.ofNullable(propertiesByName.get(localName));
   }
 
   /** Whether the property applies to the asset type; an absent restriction means all types. */
   public boolean appliesTo(String propertyLocalName, String assetTypeCode) {
+    if (assetType(assetTypeCode).isEmpty()) {
+      return false;
+    }
     return property(propertyLocalName)
         .map(p -> p.appliesTo().isEmpty() || p.appliesTo().contains(assetTypeCode))
         .orElse(false);
@@ -248,8 +291,10 @@ public final class AccountingTaxonomy {
     }
     String ns = r.getNameSpace();
     String jurisdiction = null;
-    if (NO_NAMESPACE.equals(ns)) {
-      jurisdiction = "NO";
+    for (Map.Entry<String, Module> e : MODULES.entrySet()) {
+      if (e.getValue().namespace().equals(ns)) {
+        jurisdiction = e.getKey();
+      }
     }
     return new PropertyDef(
         r.getURI(),
@@ -287,10 +332,14 @@ public final class AccountingTaxonomy {
   }
 
   Map<String, Resource> assetTypeResources() {
+    return assetTypeResources;
+  }
+
+  private Map<String, Resource> scanAssetTypeResources() {
     Map<String, Resource> m = new LinkedHashMap<>();
     for (Resource r : model.listSubjectsWithProperty(RDF.type, res(CORE_NAMESPACE + "AssetType")).toList()) {
       m.put(string(r, SKOS + "notation"), r);
     }
-    return m;
+    return Collections.unmodifiableMap(m);
   }
 }

@@ -256,7 +256,9 @@ acct:taxValue a rdf:Property ;
 # ---------------------------------------------------------------------------------------------
 
 acct:AssetShape a sh:NodeShape ;
-    sh:targetSubjectsOf acct:assetType ;
+    sh:targetClass acct:Asset ;
+    sh:targetSubjectsOf acct:assetType , acct:ledgerAccount , acct:accountGroup , acct:accountClass ,
+        acct:disposedAt , acct:valuations ;
     sh:property [
         sh:path acct:assetType ;
         sh:minCount 1 ;

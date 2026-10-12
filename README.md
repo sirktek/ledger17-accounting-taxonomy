@@ -150,7 +150,7 @@ Other Norway data:
 Code lists are year-versioned. Version 1 covers 2025 and 2026.
 
 `CodeListCoverageTest` and `SchemaElementTest` check the filing year (current year minus one, Europe/Oslo).
-If its lists are missing, the tests log a WARNING and still pass; a missing year never fails the build.
+If its lists are missing, the missing year is reported as a skipped test; the build still passes.
 To add a year once Skatteetaten publishes it:
 
 1. Add the year's `<year>_saldogruppe.xml` (from Skatteetaten/skattemeldingen) under

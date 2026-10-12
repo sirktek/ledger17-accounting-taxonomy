@@ -12,13 +12,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 class CodeListCoverageTest {
-  private static final System.Logger LOG = System.getLogger(CodeListCoverageTest.class.getName());
   private static final String SKOS = "http://www.w3.org/2004/02/skos/core#";
   private static final AccountingTaxonomy T = AccountingTaxonomy.load(Set.of("NO"));
 
@@ -91,14 +91,11 @@ class CodeListCoverageTest {
   }
 
   @Test
-  void filingYearCoverageOnlyWarns() {
+  void filingYearCoverageSkipsWhenUncovered() {
     int filingYear = Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1;
-    if (!T.norway().coveredYears("saldogruppe").contains(filingYear)) {
-      LOG.log(
-          System.Logger.Level.WARNING,
-          "No saldogruppe code list for income year {0}; add one to the Norway module",
-          filingYear);
-    }
+    Set<Integer> years = T.norway().coveredYears("saldogruppe");
+    assertTrue(years.containsAll(Set.of(2025, 2026)), "covered: " + years);
+    Assumptions.assumeTrue(years.contains(filingYear), "No saldogruppe code list for income year " + filingYear);
   }
 
   @Test
@@ -112,6 +109,9 @@ class CodeListCoverageTest {
     Resource list = m.createResource(ACCTNO + "GroupingCodeList2025");
     assertEquals(Set.of("naeringsspesifikasjon"), strings(m, list, ACCTNO + "codeListName"));
     assertEquals(Set.of("2025", "2026"), strings(m, list, ACCTNO + "incomeYear"));
+    assertTrue(strings(m, list, ACCTNO + "codeListVersion").isEmpty());
+    assertTrue(strings(m, list, ACCTNO + "codeListIdentifier").isEmpty());
+    assertTrue(strings(m, list, ACCTNO + "codeListPath").isEmpty());
     Set<String> excluded = strings(m, list, ACCTNO + "excludedCode");
     Set<String> modelled = new HashSet<>();
     for (AssetTypeDef type : T.assetTypes()) {
@@ -133,13 +133,10 @@ class CodeListCoverageTest {
   }
 
   @Test
-  void groupingFilingYearCoverageOnlyWarns() {
+  void groupingFilingYearCoverageSkipsWhenUncovered() {
     int filingYear = Year.now(ZoneId.of("Europe/Oslo")).getValue() - 1;
-    if (!T.norway().coveredYears("naeringsspesifikasjon").contains(filingYear)) {
-      LOG.log(
-          System.Logger.Level.WARNING,
-          "No naeringsspesifikasjon grouping code list for income year {0}; add one to the Norway module",
-          filingYear);
-    }
+    Set<Integer> years = T.norway().coveredYears("naeringsspesifikasjon");
+    assertTrue(years.containsAll(Set.of(2025, 2026)), "covered: " + years);
+    Assumptions.assumeTrue(years.contains(filingYear), "No naeringsspesifikasjon grouping code list for income year " + filingYear);
   }
 }
