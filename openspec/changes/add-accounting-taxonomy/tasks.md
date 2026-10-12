@@ -37,13 +37,13 @@ Tests: `mvnq -q test -Dtest=OntologySyntaxTest`.
 Files: `src/main/resources/ontologies/accounting-no.ttl`.
 Tests: `mvnq -q test -Dtest=OntologySyntaxTest`.
 
-- [ ] 3.1 Header comment (extends core; statutes cited: regnskapsloven § 1-7, skatteloven § 4-17, § 14-40, § 14-41, § 14-43; NS 4102; SAF-T grouping codes; codes only, no publisher texts)
-- [ ] 3.2 Annotation properties `accountRange`, `defaultDepreciationGroup`, `wealthValueDefault`, `depreciationRate`, `inCodeList`, `excludedCode`, code-list fields, `saftGroupingCategory`/`saftGroupingCode` (D6), each with range, en/no labels, en comment
-- [ ] 3.3 `acctno:AccountRange` nodes (`fromAccount`, `toAccount`, `coversGroup`, `wholeGroups`) on asset types and account types per D3/D6; `acct:FiscalYear` comment statement that it is the calendar year in NO
-- [ ] 3.4 `acctno:wealthValue`, `acctno:wealthValuePerShare` per D5 with applicability; `wealthValueDefault` per D6 with the § 4-17 rule in comments
-- [ ] 3.5 `acctno:DepreciationGroupA`–`J` (notation a–j, own labels, rates, `dct:source`; group h comment paraphrases the higher special rates that are not modelled), `defaultDepreciationGroup` h/d
-- [ ] 3.6 `acctno:LedgerAccountShape`, `acctno:WealthValueShape`
-- [ ] 3.7 `OntologySyntaxTest` green; no `NamingTest` forbidden token
+- [x] 3.1 Header comment (extends core; statutes cited: regnskapsloven § 1-7, skatteloven § 4-17, § 14-40, § 14-41, § 14-43; NS 4102; SAF-T grouping codes; codes only, no publisher texts)
+- [x] 3.2 Annotation properties `accountRange`, `defaultDepreciationGroup`, `wealthValueDefault`, `depreciationRate`, `inCodeList`, `excludedCode`, code-list fields, `saftGroupingCategory`/`saftGroupingCode` (D6), each with range, en/no labels, en comment
+- [x] 3.3 `acctno:AccountRange` nodes (`fromAccount`, `toAccount`, `coversGroup`, `wholeGroups`) on asset types and account types per D3/D6; `acct:FiscalYear` comment statement that it is the calendar year in NO
+- [x] 3.4 `acctno:wealthValue`, `acctno:wealthValuePerShare` per D5 with applicability; `wealthValueDefault` per D6 with the § 4-17 rule in comments
+- [x] 3.5 `acctno:DepreciationGroupA`–`J` (notation a–j, own labels, rates, `dct:source`; group h comment paraphrases the higher special rates that are not modelled), `defaultDepreciationGroup` h/d
+- [x] 3.6 `acctno:LedgerAccountShape`, `acctno:WealthValueShape`
+- [x] 3.7 `OntologySyntaxTest` green; no `NamingTest` forbidden token
 
 ### Group 4: Java loader API
 
