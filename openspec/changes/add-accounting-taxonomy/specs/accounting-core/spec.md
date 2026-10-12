@@ -105,7 +105,16 @@ one in `@no`, and an `rdfs:comment` in `@en` stating what the value means.
 ### Requirement: Core SHACL shape
 The core module SHALL define `acct:AssetShape` (targets subjects of `acct:assetType`): exactly one
 `assetType` in `acct:AssetType`, `disposedAt` of datatype `xsd:date`; and `acct:AssetValuationShape`
-(targets `acct:AssetValuation`): exactly one integer `year`. Messages SHALL be given in `@en` and `@no`.
+(targets `acct:AssetValuation`): exactly one integer `year`. Every constraint SHALL carry exactly one
+`sh:message` in `@en` and exactly one `acct:messageNo` (an annotation property declared in the core module)
+in `@no`. A second `sh:message` SHALL NOT be used: Jena's SHACL parser rejects more than one `sh:message` on a
+SPARQL-based constraint, and one rule for every constraint keeps consumers reading the Norwegian text from
+one place.
+
+#### Scenario: Messages in both languages
+- **WHEN** the property shapes and `sh:sparql` constraints of all module files are listed
+- **THEN** each has exactly one `sh:message` with language `en` and exactly one `acct:messageNo` with language `no`
+- **AND** none has an `sh:message` in another language
 
 #### Scenario: ledger17-shaped asset conforms
 - **WHEN** a ledger17-shaped asset with one valuation is validated against the core shapes

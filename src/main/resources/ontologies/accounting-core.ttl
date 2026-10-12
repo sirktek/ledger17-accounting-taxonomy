@@ -209,6 +209,11 @@ acct:disposedAt a rdf:Property ;
     rdfs:label "Disposed at"@en , "Avhendet"@no ;
     rdfs:comment "The date the asset was disposed of. The asset is left out of every fiscal year ending on or after this date."@en .
 
+acct:messageNo a rdf:Property ;
+    rdfs:range rdf:langString ;
+    rdfs:label "Message (Norwegian)"@en , "Melding (norsk)"@no ;
+    rdfs:comment "The Norwegian text of a SHACL constraint's message; sh:message carries the English text."@en .
+
 acct:valuations a rdf:Property ;
     rdfs:domain acct:Asset ;
     rdfs:range acct:AssetValuation ;
@@ -257,40 +262,40 @@ acct:AssetShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:class acct:AssetType ;
-        sh:message "An asset needs exactly one asset type from acct:AssetType."@en ,
-                   "En eiendel må ha nøyaktig én eiendelstype fra acct:AssetType."@no
+        sh:message "An asset needs exactly one asset type from acct:AssetType."@en ;
+        acct:messageNo "En eiendel må ha nøyaktig én eiendelstype fra acct:AssetType."@no
     ] ;
     sh:property [
         sh:path acct:disposedAt ;
         sh:datatype xsd:date ;
-        sh:message "disposedAt must be an xsd:date."@en ,
-                   "disposedAt må være en xsd:date."@no
+        sh:message "disposedAt must be an xsd:date."@en ;
+        acct:messageNo "disposedAt må være en xsd:date."@no
     ] ;
     sh:property [
         sh:path acct:ledgerAccount ;
         sh:datatype xsd:string ;
         sh:pattern "^[0-9]{4}$" ;
-        sh:message "A ledger account is exactly four digits."@en ,
-                   "En regnskapskonto er nøyaktig fire siffer."@no
+        sh:message "A ledger account is exactly four digits."@en ;
+        acct:messageNo "En regnskapskonto er nøyaktig fire siffer."@no
     ] ;
     sh:property [
         sh:path acct:accountGroup ;
         sh:datatype xsd:string ;
         sh:pattern "^[0-9]{2}$" ;
-        sh:message "An account group is exactly two digits."@en ,
-                   "En kontogruppe er nøyaktig to siffer."@no
+        sh:message "An account group is exactly two digits."@en ;
+        acct:messageNo "En kontogruppe er nøyaktig to siffer."@no
     ] ;
     sh:property [
         sh:path acct:accountClass ;
         sh:datatype xsd:string ;
         sh:pattern "^[0-9]$" ;
-        sh:message "An account class is exactly one digit."@en ,
-                   "En kontoklasse er nøyaktig ett siffer."@no
+        sh:message "An account class is exactly one digit."@en ;
+        acct:messageNo "En kontoklasse er nøyaktig ett siffer."@no
     ] ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "accountGroup must equal the first two digits of ledgerAccount."@en ,
-                   "accountGroup må være lik de to første sifrene i ledgerAccount."@no ;
+        sh:message "accountGroup must equal the first two digits of ledgerAccount."@en ;
+                   acct:messageNo "accountGroup må være lik de to første sifrene i ledgerAccount."@no ;
         sh:select """
             SELECT $this ?value WHERE {
               $this <http://ledger17.com/ontology/accounting#ledgerAccount> ?account ;
@@ -300,8 +305,8 @@ acct:AssetShape a sh:NodeShape ;
     ] ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "accountClass must equal the first digit of ledgerAccount."@en ,
-                   "accountClass må være lik første siffer i ledgerAccount."@no ;
+        sh:message "accountClass must equal the first digit of ledgerAccount."@en ;
+                   acct:messageNo "accountClass må være lik første siffer i ledgerAccount."@no ;
         sh:select """
             SELECT $this ?value WHERE {
               $this <http://ledger17.com/ontology/accounting#ledgerAccount> ?account ;
@@ -317,6 +322,6 @@ acct:AssetValuationShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:datatype xsd:integer ;
-        sh:message "A valuation needs exactly one integer year."@en ,
-                   "En verdsettelse må ha nøyaktig ett heltallsår."@no
+        sh:message "A valuation needs exactly one integer year."@en ;
+        acct:messageNo "En verdsettelse må ha nøyaktig ett heltallsår."@no
     ] .

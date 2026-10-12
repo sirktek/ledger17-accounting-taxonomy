@@ -22,3 +22,14 @@ Unverified: SHACL behaviour, label/range tests (later groups).
 Changed: AccountNumbers, AccountRange, AccountTypeDef, AssetTypeDef, PropertyDef, DepreciationGroupDef, SaftReference, AccountingTaxonomy, NorwegianRules under src/main/java/com/ledger17/taxonomy/accounting/.
 Verified: `mvnq -q compile` and `OntologySyntaxTest` green. No behavioural tests yet (later groups); loader code not exercised at runtime.
 Notes: assetTypes()/accountTypes() order is hardcoded lists (D4 order) since RDF has no order. properties() = rdf:Property subjects with rdfs:domain acct:Asset or acct:AssetValuation (annotations excluded); jurisdiction derived from namespace. appliesTo returns false for an unknown property. accountRanges/saft/defaults return empty/null-category for unknown codes. depreciationGroups uses saldogruppe CodeLists' incomeYear and group inCodeList; throws until group 6 data exists. Rates parsed with new BigDecimal(lexical form), e.g. "30.0". AccountType instances must be typed `a acct:AccountType` (assumed, not checked at runtime).
+
+## Handoff: Group 5
+Changed (tests): src/test/java/com/ledger17/taxonomy/accounting/{TestSupport,ModuleLoadingTest,NamingTest,LabelsTest,CarryOverTest,AssetTypeTest,ApplicabilityTest,ShaclTest,AccountNumbersTest,NorwayRangeTest,DepreciationGroupTest}.java; src/test/resources/simplelogger.properties (slf4j-simple level error).
+Fix in ontologies (defect exposed by ShaclTest): Jena 5.5 rejects two `sh:message` values on an `sh:sparql` constraint ("More than one match"). Final form (see the messageNo fix below and the spec): one `sh:message`@en plus `acct:messageNo`@no on every constraint.
+Verified: `mvnq -q test -Dtest=<the eleven group classes>` green, no stderr output.
+Notes: NamingTest builds its forbidden token from parts; its isolation scan ignores `#` comment lines (core.ttl header comment says "no schema.org terms"). Wealth/year literals in SHACL tests must be xsd:integer. Account-type ranges are read directly from the model in NorwayRangeTest (no API for them). Rates compared with compareTo.
+Unverified/deferred to group 6: `depreciationGroups(year)` returning a-j for 2025/2026, code list tests, thresholds, SAF-T codes; datakatalog and schema-element checks (group 7). ModuleLoadingTest asserts no datakatalog IRI in core-only but does not yet assert datakatalog presence for NO.
+
+## Handoff: Group 5 fix (messageNo)
+- Declared `acct:messageNo` (rdf:Property, range rdf:langString, en/no labels, en comment, no domain) in accounting-core.ttl; replaced all `rdfs:comment ...@no` shape messages with `acct:messageNo` in core (8) and no (2); each shape keeps one `sh:message @en`.
+- Added `ShaclTest.messagesInBothLanguages`; the listed test classes were run (see result in report).

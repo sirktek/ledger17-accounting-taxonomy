@@ -375,16 +375,16 @@ acctno:LedgerAccountShape a sh:NodeShape ;
     sh:property [
         sh:path acct:ledgerAccount ;
         sh:pattern "^[1-8][0-9]{3}$" ;
-        sh:message "In Norway a ledger account is four digits and starts with 1 to 8."@en ,
-                   "I Norge er en regnskapskonto fire siffer og begynner på 1 til 8."@no
+        sh:message "In Norway a ledger account is four digits and starts with 1 to 8."@en ;
+        acct:messageNo "I Norge er en regnskapskonto fire siffer og begynner på 1 til 8."@no
     ] .
 
 acctno:WealthValueShape a sh:NodeShape ;
     sh:targetClass acct:AssetValuation ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "A valuation holds either wealthValue or wealthValuePerShare, not both."@en ,
-                   "En verdsettelse har enten wealthValue eller wealthValuePerShare, ikke begge."@no ;
+        sh:message "A valuation holds either wealthValue or wealthValuePerShare, not both."@en ;
+                   acct:messageNo "En verdsettelse har enten wealthValue eller wealthValuePerShare, ikke begge."@no ;
         sh:select """
             SELECT $this WHERE {
               $this <http://ledger17.com/ontology/accounting/no#wealthValue> ?total ;

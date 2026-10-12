@@ -164,6 +164,10 @@ Here the account ranges are data in the NO module.
 - `acct:accountGroup` (`@no` "Kontogruppe") is the first two digits; `acct:accountClass` (`@no`
   "Kontoklasse") is the first digit. Both are `xsd:string`.
 - Derivation is positional, so no lookup table is needed:
+  - SHACL messages: one `sh:message`@en per constraint plus `acct:messageNo`@no (annotation property).
+    Jena 5.5's SHACL parser throws "More than one match" for two `sh:message` values on an `sh:sparql`
+    constraint (property shapes accept them); the same rule applies to every constraint so a UI reads
+    the Norwegian text from one place.
   - In RDF, `acct:AssetShape` uses `sh:sparql` to check that, when present, `accountGroup` =
     `SUBSTR(ledgerAccount, 1, 2)` and `accountClass` = `SUBSTR(ledgerAccount, 1, 1)`.
   - In Java, `AccountNumbers.accountGroup("1205") == "12"` and `accountClass("1205") == "1"`.
