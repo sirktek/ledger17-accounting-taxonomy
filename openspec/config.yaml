@@ -1,0 +1,46 @@
+schema: spec-driven
+
+context: |
+  Repo: ledger17-accounting-taxonomy (GitHub org sirktek, public, MIT). ledger17's asset accounting
+  vocabulary as RDFS + SKOS + SHACL Turtle plus a thin Java loader. Two modules:
+  - core: http://ledger17.com/ontology/accounting# (prefix acct:), accounting-core.ttl,
+    jurisdiction-neutral (Asset, AssetType, AssetValuation, AssetPurchase, Depreciation, FiscalYear,
+    AccountType, DepreciationGroup class without values).
+  - Norway: http://ledger17.com/ontology/accounting/no# (prefix acctno:), accounting-no.ttl; NS 4102
+    account ranges, saldogrupper a-j (sktl § 14-41/§ 14-43), formuesverdi (sktl § 4-17), year-versioned
+    Skatteetaten code lists, SAF-T grouping codes, Skatteetaten datakatalog SKOS links.
+  Consumers load core + chosen country modules (AccountingTaxonomy.load(Set.of("NO"))); a module that
+  is not loaded contributes no terms. ledger17 holds the domain knowledge: AssetType codes and JSON keys
+  (assetType, partyRef, valuations, year, wealthValue, ...) mirror ledger17's persisted ASSET model.
+  Stack: Java 17 baseline, Maven wrapper, Apache Jena 5.5, JUnit 5. Published to GitHub Packages only
+  (maven.pkg.github.com/sirktek/ledger17-accounting-taxonomy) as com.ledger17:accounting-taxonomy,
+  package com.ledger17.taxonomy.accounting. No services, no DB.
+  Consumers: ledger17 monorepo (Java 21, Quarkus) and asset management systems (first: Sirk)
+  receiving accounting data synced out of ledger17.
+  Hard rules: never use third-party trademarks as names (IRIs, prefixes, files, Java, labels), nor the
+  name of ledger17's internal ontology (token "nrs", any case; the acronym is never expanded here); cite
+  statutes and standards factually in comments only; ship no third-party description texts (NS 4102, SAF-T
+  grouping codes); never use the SAF-T General Ledger Standard Accounts (Regnskap Norge copyright); no dependency on any Sirk taxonomy artifact, no
+  Sirk IRIs (taxonomy.sirktek.no); never schema:domainIncludes (Sirk renders every domainIncludes
+  property; accounting values must never reach a marketplace/DPP); no per-term jurisdiction tags;
+  en+no labels on every term; VAT and non-asset transaction types are out of scope.
+  Conventions: conventional commits; OpenSpec spec-driven changes; Maven via mvnq.
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
