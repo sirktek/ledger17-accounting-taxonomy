@@ -1,0 +1,651 @@
+# Accounting vocabulary, Norway module.
+#
+# Extends accounting-core.ttl; the loader always adds core. This file only adds statements about core terms
+# and defines acctno: terms. It imports nothing, and none of it exists unless the Norway module is loaded.
+#
+# Statutes cited factually (rdfs:comment, dct:source): regnskapsloven section 1-7; skatteloven section 4-17,
+# section 14-40, section 14-41 and section 14-43. Standards referenced: NS 4102 (Standard Norge) account numbers
+# and Skatteetaten's SAF-T grouping codes. Only account numbers and codes are carried; no description text
+# from any publisher is reproduced. Labels and comments are our own wording.
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix acct:  <http://ledger17.com/ontology/accounting#> .
+@prefix acctno: <http://ledger17.com/ontology/accounting/no#> .
+
+<http://ledger17.com/ontology/accounting/no>
+    a rdfs:Resource ;
+    rdfs:label "Accounting vocabulary, Norway"@en , "Regnskapsvokabular, Norge"@no ;
+    rdfs:comment "Norwegian account ranges, tax depreciation groups, formuesverdi rules and code-list references that extend the core accounting vocabulary."@en .
+
+# ---- Statements about core terms ----
+
+acct:FiscalYear skos:scopeNote "In Norway the fiscal year is the calendar year, from 1 January to 31 December (regnskapsloven section 1-7)."@en .
+
+# ---- Classes ----
+
+acctno:AccountRange a rdfs:Class ;
+    rdfs:label "Account range"@en , "Kontointervall"@no ;
+    rdfs:comment "A span of four-digit account numbers, with the two-digit account groups it touches."@en .
+
+acctno:CodeList a rdfs:Class ;
+    rdfs:label "Code list"@en , "Kodeliste"@no ;
+    rdfs:comment "One income year's edition of an external code list whose codes this module refers to."@en .
+
+# ---- Annotation properties ----
+
+acctno:accountRange a rdf:Property ;
+    rdfs:range acctno:AccountRange ;
+    rdfs:label "Account range"@en , "Kontointervall"@no ;
+    rdfs:comment "Placed on an asset type or an account type to state a range of NS 4102 account numbers that belongs to it. May be repeated."@en .
+
+acctno:fromAccount a rdf:Property ;
+    rdfs:domain acctno:AccountRange ;
+    rdfs:range xsd:string ;
+    rdfs:label "From account"@en , "Fra konto"@no ;
+    rdfs:comment "The first four-digit account number of the range. For a single account it equals the upper bound."@en .
+
+acctno:toAccount a rdf:Property ;
+    rdfs:domain acctno:AccountRange ;
+    rdfs:range xsd:string ;
+    rdfs:label "To account"@en , "Til konto"@no ;
+    rdfs:comment "The last four-digit account number of the range, inclusive."@en .
+
+acctno:coversGroup a rdf:Property ;
+    rdfs:domain acctno:AccountRange ;
+    rdfs:range xsd:string ;
+    rdfs:label "Covers group"@en , "Dekker kontogruppe"@no ;
+    rdfs:comment "A two-digit account group that the range touches. Repeated once for each such group."@en .
+
+acctno:wholeGroups a rdf:Property ;
+    rdfs:domain acctno:AccountRange ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "Whole groups"@en , "Hele grupper"@no ;
+    rdfs:comment "True when the range consists of exactly whole account groups, false when it covers only some accounts of a group."@en .
+
+acctno:defaultDepreciationGroup a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range acct:DepreciationGroup ;
+    rdfs:label "Default depreciation group"@en , "Standard saldogruppe"@no ;
+    rdfs:comment "The depreciation group an asset of this type normally belongs to. Types without a usual group have none."@en .
+
+acctno:wealthValueDefault a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range rdf:Property ;
+    rdfs:label "Wealth value default"@en , "Standard formuesverdi"@no ;
+    rdfs:comment "The valuation field that counts as formuesverdi at 31 December when no wealth value is given. Driftsmidler count at their tax value (skatteloven section 4-17); securities and bank deposits at their book value. Property and financial fixed assets have no default, because property is valued by the tax authority and holdings are entered by hand."@en .
+
+acctno:depreciationRate a rdf:Property ;
+    rdfs:domain acct:DepreciationGroup ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Depreciation rate"@en , "Avskrivningssats"@no ;
+    rdfs:comment "The highest declining-balance depreciation rate, in percent per year, allowed for the group (skatteloven section 14-43)."@en .
+
+acctno:inCodeList a rdf:Property ;
+    rdfs:range acctno:CodeList ;
+    rdfs:label "In code list"@en , "I kodeliste"@no ;
+    rdfs:comment "States that the code of this resource appears in the given year's code list. Repeated for every year it appears in."@en .
+
+acctno:excludedCode a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:string ;
+    rdfs:label "Excluded code"@en , "Utelatt kode"@no ;
+    rdfs:comment "A code that occurs in the code list but is deliberately not modelled here."@en .
+
+acctno:codeListName a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:string ;
+    rdfs:label "Code list name"@en , "Kodelistenavn"@no ;
+    rdfs:comment "The short name of the code list, the same for every income year."@en .
+
+acctno:incomeYear a rdf:Property ;
+    rdfs:range xsd:integer ;
+    rdfs:label "Income year"@en , "Inntektsår"@no ;
+    rdfs:comment "The income year that a code list edition or schema version applies to."@en .
+
+acctno:codeListPath a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:string ;
+    rdfs:label "Code list path"@en , "Kodelistesti"@no ;
+    rdfs:comment "The path by which the filing schemas refer to the code list file."@en .
+
+acctno:codeListIdentifier a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:string ;
+    rdfs:label "Code list identifier"@en , "Kodelisteidentifikator"@no ;
+    rdfs:comment "The unique identifier carried inside the published code list file."@en .
+
+acctno:codeListVersion a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:string ;
+    rdfs:label "Code list version"@en , "Kodelisteversjon"@no ;
+    rdfs:comment "The version number carried inside the published code list file."@en .
+
+acctno:capitalisationThreshold a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:integer ;
+    rdfs:label "Capitalisation threshold"@en , "Aktiveringsgrense"@no ;
+    rdfs:comment "The cost in NOK at or above which a driftsmiddel with a long enough life must be capitalised rather than expensed (skatteloven section 14-40). It is set per income year because the statute changes it."@en .
+
+acctno:minimumLifetimeYears a rdf:Property ;
+    rdfs:domain acctno:CodeList ;
+    rdfs:range xsd:integer ;
+    rdfs:label "Minimum lifetime in years"@en , "Minste levetid i år"@no ;
+    rdfs:comment "The expected life in years at or above which a driftsmiddel must be capitalised when its cost reaches the threshold (skatteloven section 14-40)."@en .
+
+acctno:saftGroupingCategory a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range xsd:string ;
+    rdfs:label "SAF-T grouping category"@en , "SAF-T grupperingskategori"@no ;
+    rdfs:comment "The category in Skatteetaten's grouping code list for the business specification that the accounts of this asset type fall under."@en .
+
+acctno:saftGroupingCode a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range xsd:string ;
+    rdfs:label "SAF-T grouping code"@en , "SAF-T grupperingskode"@no ;
+    rdfs:comment "A grouping code from Skatteetaten's list that lies inside the account range of this asset type. May be repeated. Only the code is carried, never its description."@en .
+
+acctno:SchemaVersion a rdfs:Class ;
+    rdfs:label "Schema version"@en , "Skjemaversjon"@no ;
+    rdfs:comment "One version of one of the tax authority's filing schemas, tied to an income year."@en .
+
+acctno:SchemaElementMapping a rdfs:Class ;
+    rdfs:label "Schema element mapping"@en , "Skjemaelementkobling"@no ;
+    rdfs:comment "Maps a term of this vocabulary to an element path in one schema version. It is a mapping to a data element, never a concept match."@en .
+
+# ---- Schema element mapping terms ----
+
+acctno:schemaName a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema name"@en , "Skjemanavn"@no ;
+    rdfs:comment "The short name of the filing schema, the same for every version."@en .
+
+acctno:schemaVersion a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema version number"@en , "Skjemaversjonsnummer"@no ;
+    rdfs:comment "The version number of the filing schema."@en .
+
+acctno:schemaNamespace a rdf:Property ;
+    rdfs:domain acctno:SchemaVersion ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema namespace"@en , "Skjemanavnerom"@no ;
+    rdfs:comment "The target namespace of the schema version."@en .
+
+acctno:mapsTerm a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:label "Maps term"@en , "Kobler begrep"@no ;
+    rdfs:comment "The term of this vocabulary that the mapping describes."@en .
+
+acctno:inSchema a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range acctno:SchemaVersion ;
+    rdfs:label "In schema"@en , "I skjema"@no ;
+    rdfs:comment "The schema version that the element path is resolved against."@en .
+
+acctno:schemaElement a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range xsd:string ;
+    rdfs:label "Schema element"@en , "Skjemaelement"@no ;
+    rdfs:comment "The element path, written as complex type name, a slash and element name. The element may be declared in a base type that the complex type extends."@en .
+
+acctno:openingSchemaElement a rdf:Property ;
+    rdfs:domain acctno:SchemaElementMapping ;
+    rdfs:range xsd:string ;
+    rdfs:label "Opening schema element"@en , "Inngaaende skjemaelement"@no ;
+    rdfs:comment "The element path that holds the opening value, which equals the previous year's value of the mapped term. Same notation as schemaElement."@en .
+
+# ---- Formuesverdi fields ----
+
+acctno:wealthValue a rdf:Property ;
+    rdfs:domain acct:AssetValuation ;
+    rdfs:range xsd:decimal ;
+    acct:appliesToAssetType acct:Intangible , acct:Building , acct:Equipment , acct:FinancialFixedAsset ;
+    rdfs:label "Wealth value"@en , "Formuesverdi"@no ;
+    rdfs:comment "The total formuesverdi of the asset at 31 December, entered by hand, in NOK. Excludes wealthValuePerShare: a valuation holds one or the other. When none is given, the default for the asset type applies (see wealthValueDefault; skatteloven section 4-17 for driftsmidler)."@en .
+
+acctno:wealthValuePerShare a rdf:Property ;
+    rdfs:domain acct:AssetValuation ;
+    rdfs:range xsd:decimal ;
+    acct:appliesToAssetType acct:FinancialFixedAsset ;
+    rdfs:label "Wealth value per share"@en , "Formuesverdi per aksje"@no ;
+    rdfs:comment "The formuesverdi of one share at 31 December, in NOK. The total is this value times the number of shares held at year end. Excludes wealthValue."@en .
+
+acct:Intangible acctno:wealthValueDefault acct:taxValue .
+acct:Equipment acctno:wealthValueDefault acct:taxValue .
+acct:FinancialInstruments acctno:wealthValueDefault acct:bookValue .
+acct:BankAccount acctno:wealthValueDefault acct:bookValue .
+
+# ---- Account ranges ----
+
+acctno:RangeIntangible a acctno:AccountRange ;
+    acctno:fromAccount "1000" ; acctno:toAccount "1099" ;
+    acctno:coversGroup "10" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Intangible assets range"@en , "Immaterielle eiendeler, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1000 to 1099."@en .
+
+acctno:RangeBuilding a acctno:AccountRange ;
+    acctno:fromAccount "1100" ; acctno:toAccount "1199" ;
+    acctno:coversGroup "11" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Buildings range"@en , "Bygninger, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1100 to 1199."@en .
+
+acctno:RangeEquipment a acctno:AccountRange ;
+    acctno:fromAccount "1200" ; acctno:toAccount "1299" ;
+    acctno:coversGroup "12" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Equipment range"@en , "Utstyr, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1200 to 1299."@en .
+
+acctno:RangeFinancialFixedAsset a acctno:AccountRange ;
+    acctno:fromAccount "1300" ; acctno:toAccount "1399" ;
+    acctno:coversGroup "13" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Financial fixed assets range"@en , "Finansielle anleggsmidler, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1300 to 1399."@en .
+
+acctno:RangeFinancialInstruments a acctno:AccountRange ;
+    acctno:fromAccount "1800" ; acctno:toAccount "1899" ;
+    acctno:coversGroup "18" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Securities range"@en , "Verdipapirer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1800 to 1899."@en .
+
+acctno:RangeBankAccount1920 a acctno:AccountRange ;
+    acctno:fromAccount "1920" ; acctno:toAccount "1920" ;
+    acctno:coversGroup "19" ;
+    acctno:wholeGroups false ;
+    rdfs:label "Bank account 1920"@en , "Bankkonto 1920"@no ;
+    rdfs:comment "NS 4102 accounts 1920 to 1920."@en .
+
+acctno:RangeBankAccount1950 a acctno:AccountRange ;
+    acctno:fromAccount "1950" ; acctno:toAccount "1950" ;
+    acctno:coversGroup "19" ;
+    acctno:wholeGroups false ;
+    rdfs:label "Bank account 1950"@en , "Bankkonto 1950"@no ;
+    rdfs:comment "NS 4102 accounts 1950 to 1950."@en .
+
+acctno:RangeBankAccount1960 a acctno:AccountRange ;
+    acctno:fromAccount "1960" ; acctno:toAccount "1960" ;
+    acctno:coversGroup "19" ;
+    acctno:wholeGroups false ;
+    rdfs:label "Bank account 1960"@en , "Bankkonto 1960"@no ;
+    rdfs:comment "NS 4102 accounts 1960 to 1960."@en .
+
+acctno:RangeAssetAccount a acctno:AccountRange ;
+    acctno:fromAccount "1000" ; acctno:toAccount "1999" ;
+    acctno:coversGroup "10" , "11" , "12" , "13" , "14" , "15" , "16" , "17" , "18" , "19" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Asset accounts range"@en , "Eiendelskontoer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 1000 to 1999."@en .
+
+acctno:RangeEquityAndLiabilitiesAccount a acctno:AccountRange ;
+    acctno:fromAccount "2000" ; acctno:toAccount "2999" ;
+    acctno:coversGroup "20" , "21" , "22" , "23" , "24" , "25" , "26" , "27" , "28" , "29" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Equity and liabilities range"@en , "Egenkapital og gjeld, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 2000 to 2999."@en .
+
+acctno:RangeEquityAccount a acctno:AccountRange ;
+    acctno:fromAccount "2000" ; acctno:toAccount "2099" ;
+    acctno:coversGroup "20" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Equity accounts range"@en , "Egenkapitalkontoer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 2000 to 2099."@en .
+
+acctno:RangeLiabilityAccount a acctno:AccountRange ;
+    acctno:fromAccount "2100" ; acctno:toAccount "2999" ;
+    acctno:coversGroup "21" , "22" , "23" , "24" , "25" , "26" , "27" , "28" , "29" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Liability accounts range"@en , "Gjeldskontoer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 2100 to 2999."@en .
+
+acctno:RangeRevenueAccount a acctno:AccountRange ;
+    acctno:fromAccount "3000" ; acctno:toAccount "3999" ;
+    acctno:coversGroup "30" , "31" , "32" , "33" , "34" , "35" , "36" , "37" , "38" , "39" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Revenue accounts range"@en , "Inntektskontoer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 3000 to 3999."@en .
+
+acctno:RangeExpenseAccount a acctno:AccountRange ;
+    acctno:fromAccount "4000" ; acctno:toAccount "8999" ;
+    acctno:coversGroup "40" , "41" , "42" , "43" , "44" , "45" , "46" , "47" , "48" , "49" , "50" , "51" , "52" , "53" , "54" , "55" , "56" , "57" , "58" , "59" , "60" , "61" , "62" , "63" , "64" , "65" , "66" , "67" , "68" , "69" , "70" , "71" , "72" , "73" , "74" , "75" , "76" , "77" , "78" , "79" , "80" , "81" , "82" , "83" , "84" , "85" , "86" , "87" , "88" , "89" ;
+    acctno:wholeGroups true ;
+    rdfs:label "Expense accounts range"@en , "Kostnadskontoer, intervall"@no ;
+    rdfs:comment "NS 4102 accounts 4000 to 8999."@en .
+
+
+acct:Intangible acctno:accountRange acctno:RangeIntangible .
+acct:Building acctno:accountRange acctno:RangeBuilding .
+acct:Equipment acctno:accountRange acctno:RangeEquipment .
+acct:FinancialFixedAsset acctno:accountRange acctno:RangeFinancialFixedAsset .
+acct:FinancialInstruments acctno:accountRange acctno:RangeFinancialInstruments .
+acct:BankAccount acctno:accountRange acctno:RangeBankAccount1920 , acctno:RangeBankAccount1950 , acctno:RangeBankAccount1960 .
+acct:AssetAccount acctno:accountRange acctno:RangeAssetAccount .
+acct:EquityAndLiabilitiesAccount acctno:accountRange acctno:RangeEquityAndLiabilitiesAccount .
+acct:EquityAccount acctno:accountRange acctno:RangeEquityAccount .
+acct:LiabilityAccount acctno:accountRange acctno:RangeLiabilityAccount .
+acct:RevenueAccount acctno:accountRange acctno:RangeRevenueAccount .
+acct:ExpenseAccount acctno:accountRange acctno:RangeExpenseAccount .
+
+# ---- SAF-T grouping category and codes per asset type (codes lie inside the type's ranges; 1296, 1298 and 1299 are left out) ----
+
+acct:Intangible acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1000" ,
+    "1020" ,
+    "1070" ,
+    "1080" .
+acct:Building acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1101" ,
+    "1102" ,
+    "1103" ,
+    "1104" ,
+    "1105" ,
+    "1115" ,
+    "1117" ,
+    "1120" ,
+    "1130" ,
+    "1140" ,
+    "1150" ,
+    "1160" ,
+    "1180" .
+acct:Equipment acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1205" ,
+    "1221" ,
+    "1225" ,
+    "1238" ,
+    "1280" ,
+    "1290" ,
+    "1295" .
+acct:FinancialFixedAsset acctno:saftGroupingCategory "balanseverdiForAnleggsmiddel" ;
+    acctno:saftGroupingCode "1312" ,
+    "1313" ,
+    "1320" ,
+    "1331" ,
+    "1332" ,
+    "1340" ,
+    "1350" ,
+    "1360" ,
+    "1370" ,
+    "1380" ,
+    "1390" ,
+    "1395" .
+acct:FinancialInstruments acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" ;
+    acctno:saftGroupingCode "1800" ,
+    "1810" ,
+    "1830" ,
+    "1840" ,
+    "1880" ,
+    "1895" .
+acct:BankAccount acctno:saftGroupingCategory "balanseverdiForOmloepsmiddel" ;
+    acctno:saftGroupingCode "1920" ,
+    "1950" .
+
+# ---- Depreciation groups (skatteloven section 14-41 and section 14-43) ----
+
+acctno:DepreciationGroupA a acct:DepreciationGroup ;
+    skos:notation "a" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 30.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Office machines and similar"@en , "Kontormaskiner og lignende"@no ;
+    rdfs:comment "Depreciation group A, declining-balance rate 30 percent."@en .
+
+acctno:DepreciationGroupB a acct:DepreciationGroup ;
+    skos:notation "b" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 20.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Acquired goodwill"@en , "Ervervet goodwill"@no ;
+    rdfs:comment "Depreciation group B, declining-balance rate 20 percent."@en .
+
+acctno:DepreciationGroupC a acct:DepreciationGroup ;
+    skos:notation "c" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 24.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Trucks, vans, machinery and plant"@en , "Lastebiler, varebiler, maskiner og anlegg"@no ;
+    rdfs:comment "Depreciation group C, declining-balance rate 24 percent."@en .
+
+acctno:DepreciationGroupD a acct:DepreciationGroup ;
+    skos:notation "d" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 20.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Cars, tractors, machinery and fixtures"@en , "Personbiler, traktorer, maskiner og inventar"@no ;
+    rdfs:comment "Depreciation group D, declining-balance rate 20 percent."@en .
+
+acctno:DepreciationGroupE a acct:DepreciationGroup ;
+    skos:notation "e" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 14.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Ships, vessels and rigs"@en , "Skip, fartøy og rigger"@no ;
+    rdfs:comment "Depreciation group E, declining-balance rate 14 percent."@en .
+
+acctno:DepreciationGroupF a acct:DepreciationGroup ;
+    skos:notation "f" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 12.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Aircraft and helicopters"@en , "Fly og helikopter"@no ;
+    rdfs:comment "Depreciation group F, declining-balance rate 12 percent."@en .
+
+acctno:DepreciationGroupG a acct:DepreciationGroup ;
+    skos:notation "g" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 5.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Power and telecom transmission installations"@en , "Overføringsanlegg for kraft og tele"@no ;
+    rdfs:comment "Depreciation group G, declining-balance rate 5 percent."@en .
+
+acctno:DepreciationGroupH a acct:DepreciationGroup ;
+    skos:notation "h" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 4.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Buildings, structures and hotels"@en , "Bygg, anlegg og hoteller"@no ;
+    rdfs:comment "Depreciation group H, declining-balance rate 4 percent. Some buildings have higher statutory rates, for example livestock buildings in agriculture and simple structures with a short expected life. This vocabulary does not model those; see the rate page referenced from depreciationRate."@en .
+
+acctno:DepreciationGroupI a acct:DepreciationGroup ;
+    skos:notation "i" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 2.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Commercial buildings"@en , "Forretningsbygg"@no ;
+    rdfs:comment "Depreciation group I, declining-balance rate 2 percent."@en .
+
+acctno:DepreciationGroupJ a acct:DepreciationGroup ;
+    skos:notation "j" ;
+    acctno:inCodeList acctno:SaldogruppeCodeList2025 , acctno:SaldogruppeCodeList2026 ;
+    acctno:depreciationRate 10.0 ;
+    dct:source "Skatteloven section 14-41 and section 14-43" ;
+    rdfs:label "Technical installations in buildings"@en , "Tekniske installasjoner i bygg"@no ;
+    rdfs:comment "Depreciation group J, declining-balance rate 10 percent."@en .
+
+acct:Building acctno:defaultDepreciationGroup acctno:DepreciationGroupH .
+acct:Equipment acctno:defaultDepreciationGroup acctno:DepreciationGroupD .
+
+# ---- Shapes ----
+
+acctno:LedgerAccountShape a sh:NodeShape ;
+    sh:targetSubjectsOf acct:ledgerAccount ;
+    sh:property [
+        sh:path acct:ledgerAccount ;
+        sh:pattern "^[1-8][0-9]{3}$" ;
+        sh:message "In Norway a ledger account is four digits and starts with 1 to 8."@en ;
+        acct:messageNo "I Norge er en regnskapskonto fire siffer og begynner på 1 til 8."@no
+    ] .
+
+acctno:WealthValueShape a sh:NodeShape ;
+    sh:targetClass acct:AssetValuation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A valuation holds either wealthValue or wealthValuePerShare, not both."@en ;
+                   acct:messageNo "En verdsettelse har enten wealthValue eller wealthValuePerShare, ikke begge."@no ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <http://ledger17.com/ontology/accounting/no#wealthValue> ?total ;
+                    <http://ledger17.com/ontology/accounting/no#wealthValuePerShare> ?perShare .
+            }"""
+    ] .
+
+# ---- Code lists (Skatteetaten saldogruppe, per income year) ----
+
+acctno:SaldogruppeCodeList2025 a acctno:CodeList ;
+    acctno:codeListName "saldogruppe" ;
+    acctno:incomeYear 2025 ;
+    acctno:codeListPath "/formuesOgInntektsskatt/skattemelding/2025_saldogruppe.xml" ;
+    acctno:codeListIdentifier "b5529efb-794b-4bbb-a24f-9d754b6eaf5c" ;
+    acctno:codeListVersion "1" ;
+    acctno:excludedCode "acd" ;
+    acctno:capitalisationThreshold 30000 ;
+    acctno:minimumLifetimeYears 3 ;
+    dct:source "Skatteloven section 14-40" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/skattemeldingen/blob/9784809838c8c910b494f91f03d25a7c4fe44a36/src/resources/kodeliste/2025/2025_saldogruppe.xml> ,
+        <https://www.skatteetaten.no/rettskilder/type/handboker/skatte-abc/2025/d-2-driftsmiddel--avskrivning-painntektsforing-av-saldo/> ;
+    rdfs:label "Depreciation group code list, income year 2025"@en , "Kodeliste for saldogrupper, inntektsår 2025"@no ;
+    rdfs:comment "The tax authority's list of depreciation group codes for income year 2025. The combined code acd is left out of this vocabulary on purpose."@en .
+
+acctno:SaldogruppeCodeList2026 a acctno:CodeList ;
+    acctno:codeListName "saldogruppe" ;
+    acctno:incomeYear 2026 ;
+    acctno:codeListPath "/formuesOgInntektsskatt/skattemelding/2026_saldogruppe.xml" ;
+    acctno:codeListIdentifier "1fd894a9-4baa-4a18-995f-1f549e3221c0" ;
+    acctno:codeListVersion "1" ;
+    acctno:excludedCode "acd" ;
+    acctno:capitalisationThreshold 30000 ;
+    acctno:minimumLifetimeYears 3 ;
+    dct:source "Skatteloven section 14-40" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/skattemeldingen/blob/9784809838c8c910b494f91f03d25a7c4fe44a36/src/resources/kodeliste/2026/2026_saldogruppe.xml> ;
+    rdfs:label "Depreciation group code list, income year 2026"@en , "Kodeliste for saldogrupper, inntektsår 2026"@no ;
+    rdfs:comment "The tax authority's list of depreciation group codes for income year 2026. The combined code acd is left out of this vocabulary on purpose."@en .
+
+# ---- Datakatalog concepts and reference pages ----
+
+acct:Building skos:closeMatch
+    <https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd0b-2964-11e6-b2bc-96405985e0fa> ,
+    <https://data.skatteetaten.no/web/datakatalog/begrep/41b9c8b8-973b-11e9-bed2-005056821322> .
+
+acctno:wealthValue rdfs:seeAlso <https://www.skatteetaten.no/satser/formuesskatt/> .
+acctno:wealthValueDefault rdfs:seeAlso <https://www.skatteetaten.no/satser/formuesskatt/> .
+acct:DepreciationGroup rdfs:seeAlso <https://www.skatteetaten.no/satser/avskrivningssatser/> .
+acctno:depreciationRate rdfs:seeAlso <https://www.skatteetaten.no/satser/avskrivningssatser/> .
+acct:taxValue rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+acctno:capitalisationThreshold rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+acctno:minimumLifetimeYears rdfs:seeAlso <https://www.skatteetaten.no/bedrift-og-organisasjon/skatt/skattemelding-naringsdrivende/fradrag/eiendeler-utstyr-eiendom/bedriftens-eiendeler/kjope-eiendeler-til-bedriften/> .
+
+# ---- SAF-T grouping code list (Skatteetaten naeringsspesifikasjon) ----
+
+acctno:GroupingCodeList2025 a acctno:CodeList ;
+    acctno:codeListName "naeringsspesifikasjon" ;
+    acctno:incomeYear 2025 , 2026 ;
+    acctno:excludedCode "1296" , "1298" , "1299" ;
+    rdfs:seeAlso <https://github.com/Skatteetaten/saf-t/blob/05179521e435d82feb0b2d6c89a92a32a4f2d02f/Grouping%20Category%20Code%202025-2026/CSV/naeringsspesifikasjon.csv> ;
+    rdfs:label "Grouping code list for the business specification, income years 2025 and 2026"@en , "Grupperingskodeliste for næringsspesifikasjon, inntektsår 2025 og 2026"@no ;
+    rdfs:comment "The tax authority's SAF-T grouping codes for the business specification, one edition that covers income years 2025 and 2026. Only codes are carried."@en .
+
+# ---- Filing schema versions ----
+
+acctno:NaeringsspesifikasjonV6 a acctno:SchemaVersion ;
+    acctno:schemaName "naeringsspesifikasjon" ;
+    acctno:schemaVersion "6" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:naeringsspesifikasjon:ekstern:v6" ;
+    acctno:incomeYear 2025 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/naeringsspesifikasjon_v6_ekstern.xsd> ;
+    rdfs:label "Business specification schema, version 6"@en , "Næringsspesifikasjon, skjemaversjon 6"@no ;
+    rdfs:comment "Version 6 of the tax authority's business specification filing schema, used for income year 2025."@en .
+
+acctno:NaeringsspesifikasjonV7 a acctno:SchemaVersion ;
+    acctno:schemaName "naeringsspesifikasjon" ;
+    acctno:schemaVersion "7" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:naeringsspesifikasjon:ekstern:v7" ;
+    acctno:incomeYear 2026 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/naeringsspesifikasjon_v7_ekstern.xsd> ;
+    rdfs:label "Business specification schema, version 7"@en , "Næringsspesifikasjon, skjemaversjon 7"@no ;
+    rdfs:comment "Version 7 of the tax authority's business specification filing schema, used for income year 2026."@en .
+
+acctno:SkattemeldingUpersonligV5 a acctno:SchemaVersion ;
+    acctno:schemaName "skattemeldingUpersonlig" ;
+    acctno:schemaVersion "5" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:skattemelding:upersonlig:ekstern:v5" ;
+    acctno:incomeYear 2025 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/skattemeldingUpersonlig_v5_ekstern.xsd> ;
+    rdfs:label "Tax return, non-personal taxpayers schema, version 5"@en , "Skattemelding for upersonlige skattytere, skjemaversjon 5"@no ;
+    rdfs:comment "Version 5 of the tax authority's tax return, non-personal taxpayers filing schema, used for income year 2025."@en .
+
+acctno:SkattemeldingUpersonligV6 a acctno:SchemaVersion ;
+    acctno:schemaName "skattemeldingUpersonlig" ;
+    acctno:schemaVersion "6" ;
+    acctno:schemaNamespace "urn:no:skatteetaten:fastsetting:formueinntekt:skattemelding:upersonlig:ekstern:v6" ;
+    acctno:incomeYear 2026 ;
+    dct:source <https://github.com/Skatteetaten/skattemeldingen/blob/v1.62.115/src/resources/xsd/skattemeldingUpersonlig_v6_ekstern.xsd> ;
+    rdfs:label "Tax return, non-personal taxpayers schema, version 6"@en , "Skattemelding for upersonlige skattytere, skjemaversjon 6"@no ;
+    rdfs:comment "Version 6 of the tax authority's tax return, non-personal taxpayers filing schema, used for income year 2026."@en .
+
+# ---- Schema element mappings (data elements, not concept matches) ----
+
+acctno:MapDepreciationGroupNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:depreciationGroup ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/saldogruppe" ;
+    rdfs:label "Mapping of depreciation group, Naeringsspesifikasjon v6"@en , "Kobling av saldogruppe, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps depreciation group to the element SaldoavskrevetAnleggsmiddel/saldogruppe in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapDepreciationGroupNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:depreciationGroup ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/saldogruppe" ;
+    rdfs:label "Mapping of depreciation group, Naeringsspesifikasjon v7"@en , "Kobling av saldogruppe, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps depreciation group to the element SaldoavskrevetAnleggsmiddel/saldogruppe in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapDepreciationRateNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:depreciationRate ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/avskrivningssats" ;
+    rdfs:label "Mapping of depreciation rate, Naeringsspesifikasjon v6"@en , "Kobling av avskrivningssats, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps depreciation rate to the element SaldoavskrevetAnleggsmiddel/avskrivningssats in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapDepreciationRateNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:depreciationRate ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/avskrivningssats" ;
+    rdfs:label "Mapping of depreciation rate, Naeringsspesifikasjon v7"@en , "Kobling av avskrivningssats, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps depreciation rate to the element SaldoavskrevetAnleggsmiddel/avskrivningssats in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapTaxValueNaeringsspesifikasjonV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:taxValue ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV6 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/utgaaendeVerdi" ;
+    acctno:openingSchemaElement "SaldoavskrevetAnleggsmiddel/inngaaendeVerdi" ;
+    rdfs:label "Mapping of tax value, Naeringsspesifikasjon v6"@en , "Kobling av skattemessig verdi, Naeringsspesifikasjon v6"@no ;
+    rdfs:comment "Maps tax value to the element SaldoavskrevetAnleggsmiddel/utgaaendeVerdi in the Naeringsspesifikasjon version 6 schema."@en .
+
+acctno:MapTaxValueNaeringsspesifikasjonV7 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acct:taxValue ;
+    acctno:inSchema acctno:NaeringsspesifikasjonV7 ;
+    acctno:schemaElement "SaldoavskrevetAnleggsmiddel/utgaaendeVerdi" ;
+    acctno:openingSchemaElement "SaldoavskrevetAnleggsmiddel/inngaaendeVerdi" ;
+    rdfs:label "Mapping of tax value, Naeringsspesifikasjon v7"@en , "Kobling av skattemessig verdi, Naeringsspesifikasjon v7"@no ;
+    rdfs:comment "Maps tax value to the element SaldoavskrevetAnleggsmiddel/utgaaendeVerdi in the Naeringsspesifikasjon version 7 schema."@en .
+
+acctno:MapWealthValueSkattemeldingUpersonligV5 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:wealthValue ;
+    acctno:inSchema acctno:SkattemeldingUpersonligV5 ;
+    acctno:schemaElement "Formuesobjekt/formuesverdi" ;
+    rdfs:label "Mapping of wealth value, SkattemeldingUpersonlig v5"@en , "Kobling av formuesverdi, SkattemeldingUpersonlig v5"@no ;
+    rdfs:comment "Maps wealth value to the element Formuesobjekt/formuesverdi in the SkattemeldingUpersonlig version 5 schema."@en .
+
+acctno:MapWealthValueSkattemeldingUpersonligV6 a acctno:SchemaElementMapping ;
+    acctno:mapsTerm acctno:wealthValue ;
+    acctno:inSchema acctno:SkattemeldingUpersonligV6 ;
+    acctno:schemaElement "Formuesobjekt/formuesverdi" ;
+    rdfs:label "Mapping of wealth value, SkattemeldingUpersonlig v6"@en , "Kobling av formuesverdi, SkattemeldingUpersonlig v6"@no ;
+    rdfs:comment "Maps wealth value to the element Formuesobjekt/formuesverdi in the SkattemeldingUpersonlig version 6 schema."@en .

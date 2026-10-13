@@ -164,6 +164,10 @@ Here the account ranges are data in the NO module.
 - `acct:accountGroup` (`@no` "Kontogruppe") is the first two digits; `acct:accountClass` (`@no`
   "Kontoklasse") is the first digit. Both are `xsd:string`.
 - Derivation is positional, so no lookup table is needed:
+  - SHACL messages: one `sh:message`@en per constraint plus `acct:messageNo`@no (annotation property).
+    Jena 5.5's SHACL parser throws "More than one match" for two `sh:message` values on an `sh:sparql`
+    constraint (property shapes accept them); the same rule applies to every constraint so a UI reads
+    the Norwegian text from one place.
   - In RDF, `acct:AssetShape` uses `sh:sparql` to check that, when present, `accountGroup` =
     `SUBSTR(ledgerAccount, 1, 2)` and `accountClass` = `SUBSTR(ledgerAccount, 1, 1)`.
   - In Java, `AccountNumbers.accountGroup("1205") == "12"` and `accountClass("1205") == "1"`.
@@ -301,16 +305,17 @@ Ranges are ledger17's: deferred tax 1070 sits inside Intangible, land 1140-1159 
 - Codes deliberately not modeled are listed with `acctno:excludedCode` on the code list (`acd`).
 - v1 covers 2025 and 2026. Adding a year adds one `CodeList` instance plus `inCodeList` triples, never a
   new term.
-- The SAF-T grouping list is modeled the same way as `acctno:GroupingCodeList2025` (name
-  `naeringsspesifikasjon`, `incomeYear` 2025 and 2026, from Skatteetaten/saf-t
-  `Grouping Category Code 2025-2026`).
+- The SAF-T grouping list is the exception: `acctno:GroupingCodeList2025` (name
+  `naeringsspesifikasjon`, `incomeYear` 2025 and 2026 in one node, from Skatteetaten/saf-t
+  `Grouping Category Code 2025-2026`) has no `codeListPath`, `codeListIdentifier` or `codeListVersion`,
+  and its codes are literals with no `inCodeList`.
 
 **SAF-T grouping codes** (Skatteetaten's næringsspesifikasjon list; the SAF-T standard accounts are not
 referenced):
 - `acctno:saftGroupingCategory` on each asset type.
 - `acctno:saftGroupingCode` (repeatable literals) lists every `naeringsspesifikasjon` code within the
   type's range, except 1296/1298/1299 (negative gain/loss, timber and agriculture accounts, not assets).
-  Each code also has `acctno:inCodeList`.
+  The codes are literals, so `acctno:GroupingCodeList2025` (incomeYear 2025, 2026) carries the year coverage.
 - Codes only, no description texts.
 - Later item: grouping code → saldogruppe defaults (1205→d, 1238→c, 1280→a, …).
 
@@ -495,7 +500,7 @@ Nothing else: no service layer and no Sirk-style generic `PropertyDefinition`.
   - every fixture code is a group notation with `inCodeList` for that year, or an `excludedCode`, and
     the reverse;
   - **year coverage:** when income year `Year.now(Europe/Oslo) - 1` (the year being filed) has no
-    `saldogruppe` or grouping code list, the test logs a WARNING naming the missing year and passes.
+    `saldogruppe` or grouping code list, the test is reported as skipped (JUnit assumption) with a message naming the missing year, and the build passes.
     A missing year must never fail the build: from 1 January every unrelated build and hotfix release
     would be blocked until the new lists are added. `depreciationGroups(2019)` throws (that part is
     not time-dependent and does fail).
@@ -539,7 +544,7 @@ neither step changes them:
 - [Repo lives in the sirktek org while names are ledger17's] → intentional; a move (D10) changes no
   names.
 - [GitHub Packages needs auth] → consumer prerequisite in D7.
-- [The time-dependent coverage test turns red in January] → intended. The fix is a new `CodeList` year
+- [The time-dependent coverage test is skipped in January] → the test is reported as skipped (never red), so the gap stays visible without blocking builds. The fix is a new `CodeList` year
   once Skatteetaten publishes the list (historically mid-year for the following filing). Until then a
   maintainer can add the year with the previous list's codes and a comment, then verify later.
 - [Statutory rates change] → rates are documentation with `dct:source`; the statute is the source of
@@ -558,4 +563,4 @@ adopts with no data migration. Sirk removes its copies only after adopting this 
 ## Open Questions
 
 None. Resolved: the Equipment label is `@no` "Utstyr og kjøretøy" / `@en` "Equipment and vehicles";
-a missing filing year is a warning, not a build failure.
+a missing filing year is reported as a skipped test; the build still passes.

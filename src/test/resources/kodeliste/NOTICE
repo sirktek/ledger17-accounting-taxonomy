@@ -1,0 +1,18 @@
+Skatteetaten code lists used as test fixtures
+=============================================
+
+Files:
+  2025/2025_saldogruppe.xml
+  2026/2026_saldogruppe.xml
+
+Source:   https://github.com/Skatteetaten/skattemeldingen
+Path:     src/resources/kodeliste/<year>/<year>_saldogruppe.xml
+Commit:   9784809838c8c910b494f91f03d25a7c4fe44a36
+License:  Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Changes:  none; the files are stored as published.
+
+SHA-256:
+  bfb94ce975743b1ff697d1059b0d00b17755670c7d1ffb14aa78f29fff04849e  2025/2025_saldogruppe.xml
+  6c5cda1b45e28c32cbc81c52c5d1e98de922803846240ef693ea689793861c16  2026/2026_saldogruppe.xml
+
+The fixtures are used only by tests; they are not part of the published artifact.

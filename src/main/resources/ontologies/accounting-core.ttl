@@ -1,0 +1,329 @@
+# Accounting vocabulary, jurisdiction-neutral core.
+#
+# Mirrors ledger17's ASSET model: the asset types, the asset-level fields and the yearly valuation fields
+# that ledger17 persists. Local names equal ledger17's JSON keys and skos:notation equals its persisted
+# asset type codes, so stored data needs no mapping.
+#
+# Rules for this file:
+#  - Isolation: no reference to any asset management system and no schema.org terms. Applicability is
+#    stated with acct:appliesToAssetType, never with per-term jurisdiction tags.
+#  - Jurisdiction-specific rules, values, ranges and code lists live in separate country modules that a
+#    consumer loads on top of this file. This file never refers to them.
+#  - Naming: no third-party trademark appears in any name or label. Statutes and standards are cited only
+#    in rdfs:comment or dct:source.
+#  - Values say what a figure means, never where it is produced.
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix acct: <http://ledger17.com/ontology/accounting#> .
+
+<http://ledger17.com/ontology/accounting>
+    a rdfs:Resource ;
+    rdfs:label "Accounting vocabulary, core"@en , "Regnskapsvokabular, kjerne"@no ;
+    rdfs:comment "Jurisdiction-neutral terms for assets, their yearly valuations and the account types of a ledger."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Carried-over classes
+# ---------------------------------------------------------------------------------------------
+
+acct:AssetPurchase a rdfs:Class ;
+    rdfs:label "Asset purchase"@en , "Anskaffelse av eiendel"@no ;
+    rdfs:comment "The acquisition of an asset. Its cost is the basis of the asset's book value."@en .
+
+acct:Depreciation a rdfs:Class ;
+    rdfs:label "Depreciation"@en , "Avskrivning"@no ;
+    rdfs:comment "The periodic allocation of an asset's cost over its useful life. It reduces the book value."@en .
+
+acct:FiscalYear a rdfs:Class ;
+    rdfs:label "Fiscal year"@en , "Regnskapsår"@no ;
+    rdfs:comment "The accounting period for which values are stated. It is identified by the year in which it ends."@en .
+
+acct:AccountType a rdfs:Class ;
+    rdfs:label "Account type"@en , "Kontotype"@no ;
+    rdfs:comment "The kind of an account in the ledger, for example asset, equity or revenue."@en .
+
+acct:AssetAccount a acct:AccountType ;
+    rdfs:label "Asset account"@en , "Eiendelskonto"@no ;
+    rdfs:comment "An account that holds assets. It covers the whole asset side of the balance sheet."@en .
+
+acct:EquityAndLiabilitiesAccount a acct:AccountType ;
+    rdfs:label "Equity and liabilities"@en , "Egenkapital og gjeld"@no ;
+    rdfs:comment "An account on the financing side of the balance sheet. It is the common parent of equity and liability accounts."@en .
+
+acct:EquityAccount a acct:AccountType ;
+    skos:broader acct:EquityAndLiabilitiesAccount ;
+    rdfs:label "Equity account"@en , "Egenkapitalkonto"@no ;
+    rdfs:comment "An account that holds equity, the residual interest in the assets after liabilities are deducted. Equity is not a liability."@en .
+
+acct:LiabilityAccount a acct:AccountType ;
+    skos:broader acct:EquityAndLiabilitiesAccount ;
+    rdfs:label "Liability account"@en , "Gjeldskonto"@no ;
+    rdfs:comment "An account that holds liabilities, obligations to third parties."@en .
+
+acct:RevenueAccount a acct:AccountType ;
+    rdfs:label "Revenue account"@en , "Inntektskonto"@no ;
+    rdfs:comment "An account that records income for the period."@en .
+
+acct:ExpenseAccount a acct:AccountType ;
+    rdfs:label "Expense account"@en , "Kostnadskonto"@no ;
+    rdfs:comment "An account that records costs for the period."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Core classes
+# ---------------------------------------------------------------------------------------------
+
+acct:Asset a rdfs:Class ;
+    rdfs:label "Asset"@en , "Eiendel"@no ;
+    rdfs:comment "An asset as an accounting system records it, with its type, ledger account and yearly valuations."@en .
+
+acct:AssetValuation a rdfs:Class ;
+    rdfs:label "Asset valuation"@en , "Verdsettelse av eiendel"@no ;
+    rdfs:comment "The values of one asset at the end of one fiscal year."@en .
+
+acct:DepreciationGroup a rdfs:Class ;
+    rdfs:label "Depreciation group"@en , "Saldogruppe"@no ;
+    rdfs:comment "A tax depreciation pool whose assets are written down together. The core defines no instances; a jurisdiction module supplies them."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Annotation properties
+# ---------------------------------------------------------------------------------------------
+
+acct:accountType a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range acct:AccountType ;
+    rdfs:label "Account type"@en , "Kontotype"@no ;
+    rdfs:comment "The account type that holds assets of this asset type. All asset types point to the asset account type."@en .
+
+acct:requiresCounterparty a rdf:Property ;
+    rdfs:domain acct:AssetType ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "Requires counterparty"@en , "Krever motpart"@no ;
+    rdfs:comment "True when an asset of this type must name the other party it is held in, for example the investee company."@en .
+
+acct:appliesToAssetType a rdf:Property ;
+    rdfs:range acct:AssetType ;
+    rdfs:label "Applies to asset type"@en , "Gjelder eiendelstype"@no ;
+    rdfs:comment "Placed on a property to state an asset type it applies to. May be repeated. When absent, the property applies to all asset types."@en .
+
+acct:defaultAssetType a rdf:Property ;
+    rdfs:range acct:AssetType ;
+    rdfs:label "Default asset type"@en , "Standard eiendelstype"@no ;
+    rdfs:comment "Placed by a consumer on its own class to state which asset type instances of that class normally have."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Account numbers: four digits, class and group derived positionally
+# ---------------------------------------------------------------------------------------------
+
+acct:ledgerAccount a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range xsd:string ;
+    rdfs:label "Ledger account"@en , "Regnskapskonto"@no ;
+    rdfs:comment "The ledger account of the asset, exactly four digits, in the chart of accounts that a jurisdiction module defines. Longer sub-account numbers are not allowed."@en .
+
+acct:accountGroup a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range xsd:string ;
+    rdfs:label "Account group"@en , "Kontogruppe"@no ;
+    rdfs:comment "The first two digits of the ledger account. When present it must agree with the ledger account."@en .
+
+acct:accountClass a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range xsd:string ;
+    rdfs:label "Account class"@en , "Kontoklasse"@no ;
+    rdfs:comment "The first digit of the ledger account. When present it must agree with the ledger account."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Asset types
+# ---------------------------------------------------------------------------------------------
+
+acct:AssetType a rdfs:Class ;
+    rdfs:label "Asset type"@en , "Eiendelstype"@no ;
+    rdfs:comment "The kind of an asset. The notation of each value is the code that ledger17 persists."@en .
+
+acct:Intangible a acct:AssetType ;
+    skos:notation "INTANGIBLE" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty false ;
+    rdfs:label "Intangible asset"@en , "Immateriell eiendel"@no ;
+    rdfs:comment "An asset without physical form, such as a licence, a patent or capitalised development cost."@en .
+
+acct:Building a acct:AssetType ;
+    skos:notation "BUILDING" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty false ;
+    rdfs:label "Building"@en , "Bygning"@no ;
+    rdfs:comment "Real estate held as an asset, including land and buildings."@en .
+
+acct:Equipment a acct:AssetType ;
+    skos:notation "EQUIPMENT" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty false ;
+    rdfs:label "Equipment and vehicles"@en , "Utstyr og kjøretøy"@no ;
+    rdfs:comment "Movable operating assets such as machinery, fixtures, computers and vehicles."@en .
+
+acct:FinancialFixedAsset a acct:AssetType ;
+    skos:notation "FINANCIAL_FIXED_ASSET" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty true ;
+    rdfs:label "Financial fixed asset"@en , "Finansielt anleggsmiddel"@no ;
+    rdfs:comment "A long-term financial holding, such as shares in a subsidiary or other investee. The asset names the investee party."@en .
+
+acct:FinancialInstruments a acct:AssetType ;
+    skos:notation "FINANCIAL_INSTRUMENTS" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty false ;
+    rdfs:label "Securities"@en , "Verdipapir"@no ;
+    rdfs:comment "Financial instruments held for trading or as current assets, carried at market value."@en .
+
+acct:BankAccount a acct:AssetType ;
+    skos:notation "BANK_ACCOUNT" ;
+    acct:accountType acct:AssetAccount ;
+    acct:requiresCounterparty false ;
+    rdfs:label "Bank account"@en , "Bankkonto"@no ;
+    rdfs:comment "A deposit account at a bank. The balance is the value."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Asset-level properties
+# ---------------------------------------------------------------------------------------------
+
+acct:assetType a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range acct:AssetType ;
+    rdfs:label "Asset type"@en , "Eiendelstype"@no ;
+    rdfs:comment "The kind of the asset. In JSON it is written as the skos:notation of the asset type."@en .
+
+acct:partyRef a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range xsd:string ;
+    acct:appliesToAssetType acct:FinancialFixedAsset ;
+    rdfs:label "Party reference"@en , "Partsreferanse"@no ;
+    rdfs:comment "The identifier of the investee party in which the holding is placed."@en .
+
+acct:disposedAt a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range xsd:date ;
+    rdfs:label "Disposed at"@en , "Avhendet"@no ;
+    rdfs:comment "The date the asset was disposed of. The asset is left out of every fiscal year ending on or after this date."@en .
+
+acct:messageNo a rdf:Property ;
+    rdfs:range rdf:langString ;
+    rdfs:label "Message (Norwegian)"@en , "Melding (norsk)"@no ;
+    rdfs:comment "The Norwegian text of a SHACL constraint's message; sh:message carries the English text."@en .
+
+acct:valuations a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range acct:AssetValuation ;
+    rdfs:label "Valuations"@en , "Verdsettelser"@no ;
+    rdfs:comment "The yearly valuations of the asset, one for each fiscal year."@en .
+
+acct:depreciationGroup a rdf:Property ;
+    rdfs:domain acct:Asset ;
+    rdfs:range acct:DepreciationGroup ;
+    acct:appliesToAssetType acct:Intangible , acct:Building , acct:Equipment ;
+    rdfs:label "Depreciation group"@en , "Saldogruppe"@no ;
+    rdfs:comment "The tax depreciation group the asset belongs to. The groups are defined by a jurisdiction module."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Valuation fields
+# ---------------------------------------------------------------------------------------------
+
+acct:year a rdf:Property ;
+    rdfs:domain acct:AssetValuation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "Year"@en , "År"@no ;
+    rdfs:comment "The year in which the fiscal year ends. It identifies the fiscal year the valuation belongs to."@en .
+
+acct:bookValue a rdf:Property ;
+    rdfs:domain acct:AssetValuation ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Book value"@en , "Bokført verdi"@no ;
+    rdfs:comment "The carrying amount at year end: the cost from the asset purchase less accumulated depreciation and write-downs, in the reporting currency."@en .
+
+acct:taxValue a rdf:Property ;
+    rdfs:domain acct:AssetValuation ;
+    rdfs:range xsd:decimal ;
+    acct:appliesToAssetType acct:Intangible , acct:Building , acct:Equipment ,
+        acct:FinancialFixedAsset , acct:FinancialInstruments ;
+    rdfs:label "Tax value"@en , "Skattemessig verdi"@no ;
+    rdfs:comment "The tax written-down value at year end, the amount that the depreciation rate is applied to, in the reporting currency."@en .
+
+# ---------------------------------------------------------------------------------------------
+# Shapes
+# ---------------------------------------------------------------------------------------------
+
+acct:AssetShape a sh:NodeShape ;
+    sh:targetClass acct:Asset ;
+    sh:targetSubjectsOf acct:assetType , acct:ledgerAccount , acct:accountGroup , acct:accountClass ,
+        acct:disposedAt , acct:valuations ;
+    sh:property [
+        sh:path acct:assetType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class acct:AssetType ;
+        sh:message "An asset needs exactly one asset type from acct:AssetType."@en ;
+        acct:messageNo "En eiendel må ha nøyaktig én eiendelstype fra acct:AssetType."@no
+    ] ;
+    sh:property [
+        sh:path acct:disposedAt ;
+        sh:datatype xsd:date ;
+        sh:message "disposedAt must be an xsd:date."@en ;
+        acct:messageNo "disposedAt må være en xsd:date."@no
+    ] ;
+    sh:property [
+        sh:path acct:ledgerAccount ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9]{4}$" ;
+        sh:message "A ledger account is exactly four digits."@en ;
+        acct:messageNo "En regnskapskonto er nøyaktig fire siffer."@no
+    ] ;
+    sh:property [
+        sh:path acct:accountGroup ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9]{2}$" ;
+        sh:message "An account group is exactly two digits."@en ;
+        acct:messageNo "En kontogruppe er nøyaktig to siffer."@no
+    ] ;
+    sh:property [
+        sh:path acct:accountClass ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9]$" ;
+        sh:message "An account class is exactly one digit."@en ;
+        acct:messageNo "En kontoklasse er nøyaktig ett siffer."@no
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "accountGroup must equal the first two digits of ledgerAccount."@en ;
+                   acct:messageNo "accountGroup må være lik de to første sifrene i ledgerAccount."@no ;
+        sh:select """
+            SELECT $this ?value WHERE {
+              $this <http://ledger17.com/ontology/accounting#ledgerAccount> ?account ;
+                    <http://ledger17.com/ontology/accounting#accountGroup> ?value .
+              FILTER (STR(?value) != SUBSTR(STR(?account), 1, 2))
+            }"""
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "accountClass must equal the first digit of ledgerAccount."@en ;
+                   acct:messageNo "accountClass må være lik første siffer i ledgerAccount."@no ;
+        sh:select """
+            SELECT $this ?value WHERE {
+              $this <http://ledger17.com/ontology/accounting#ledgerAccount> ?account ;
+                    <http://ledger17.com/ontology/accounting#accountClass> ?value .
+              FILTER (STR(?value) != SUBSTR(STR(?account), 1, 1))
+            }"""
+    ] .
+
+acct:AssetValuationShape a sh:NodeShape ;
+    sh:targetClass acct:AssetValuation ;
+    sh:property [
+        sh:path acct:year ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:integer ;
+        sh:message "A valuation needs exactly one integer year."@en ;
+        acct:messageNo "En verdsettelse må ha nøyaktig ett heltallsår."@no
+    ] .

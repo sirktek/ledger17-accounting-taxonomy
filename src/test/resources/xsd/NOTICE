@@ -1,0 +1,24 @@
+Skatteetaten filing schemas used as test fixtures
+=================================================
+
+Files:
+  naeringsspesifikasjon_v6_ekstern.xsd
+  naeringsspesifikasjon_v7_ekstern.xsd
+  skattemeldingUpersonlig_v5_ekstern.xsd
+  skattemeldingUpersonlig_v6_ekstern.xsd
+
+Source:   https://github.com/Skatteetaten/skattemeldingen
+Path:     src/resources/xsd/<file>
+Tag:      v1.62.115
+Commit:   9784809838c8c910b494f91f03d25a7c4fe44a36
+License:  Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Changes:  every xsd:annotation element (and so every xsd:documentation text) was removed and the files were
+          re-serialised; element and type names, attributes and code list references are unchanged.
+
+SHA-256 of the original files:
+  6300d00b31f4cb1ccd45582cef041fb78400a6d9c2d351f6f320872dbb39f8ef  naeringsspesifikasjon_v6_ekstern.xsd
+  f6d3aa201e7f02edf3aab9b3f10f8e767b54607804bbcbe8dd48aa3471c01cca  naeringsspesifikasjon_v7_ekstern.xsd
+  d8e74eda092540a974efa63cc4608fdf36754dea27f9349b3293f874f9907d52  skattemeldingUpersonlig_v5_ekstern.xsd
+  8ff9b30779f905b1d96dcf6e3046f34a7237597d27b62954fdacf44f26859e51  skattemeldingUpersonlig_v6_ekstern.xsd
+
+The fixtures are used only by tests; they are not part of the published artifact.

@@ -1,0 +1,59 @@
+name: Build, tag and release Java project
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write  # Required for creating Git tags
+      packages: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'zulu'
+        cache: maven
+        server-id: github
+        server-username: GITHUB_ACTOR
+        server-password: GITHUB_TOKEN
+
+    - name: Test with Maven
+      run: ./mvnw clean -U test -Drevision=1.${{github.run_number}}
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Configure Git
+      run: git config --global --add safe.directory /github/workspace
+    - name: Git tag
+      uses: cardinalby/git-tag-action@master
+      env:
+        TAG: 1.${{github.run_number}}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set Release Version
+      run: |
+        VERSION="1.${{github.run_number}}"
+        echo "Setting version to: $VERSION"
+        ./mvnw versions:set -DnewVersion=$VERSION --batch-mode --no-transfer-progress
+        echo "Version updated in pom.xml:"
+        grep -A1 -B1 "<version>" pom.xml | head -3
+    - name: Verify Release Version
+      run: |
+        VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "Maven project version: $VERSION"
+        if [[ $VERSION == *"SNAPSHOT"* ]]; then
+          echo "ERROR: Cannot publish SNAPSHOT version as a release"
+          exit 1
+        fi
+
+    - name: Publish to GitHub Packages
+      run: ./mvnw deploy -P github-packages -Dmaven.test.skip --batch-mode --no-transfer-progress
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

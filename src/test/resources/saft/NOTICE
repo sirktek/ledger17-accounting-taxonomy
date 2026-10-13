@@ -1,0 +1,14 @@
+Skatteetaten SAF-T grouping codes used as a test fixture
+========================================================
+
+File:     naeringsspesifikasjon.csv
+Source:   https://github.com/Skatteetaten/saf-t
+Path:     Grouping Category Code 2025-2026/CSV/naeringsspesifikasjon.csv
+Commit:   05179521e435d82feb0b2d6c89a92a32a4f2d02f (default branch head when fetched, 2026-10-12)
+License:  Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Changes:  reduced to the columns GroupingCategory and GroupingCode, and to the two balance categories
+          balanseverdiForAnleggsmiddel and balanseverdiForOmloepsmiddel. No description texts are kept.
+
+SHA-256 of the original file: 88277d2cffae1abd74b31b8eea057d595c7621ff6de54633fa942104ce28bb7f
+
+The fixture is used only by tests; it is not part of the published artifact.

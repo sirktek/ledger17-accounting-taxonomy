@@ -61,16 +61,18 @@ and FinancialFixedAsset. `acctno:WealthValueShape` SHALL reject a valuation carr
 The Norway module SHALL model each referenced Skatteetaten code list per income year as an
 `acctno:CodeList` with `codeListName`, `incomeYear`, `codeListPath`, `codeListIdentifier` and
 `codeListVersion`, and SHALL link every code value to each year's list via `acctno:inCodeList`. Codes not
-modeled SHALL be listed via `acctno:excludedCode`. Version 1 SHALL cover `saldogruppe` for 2025 and 2026
-and the SAF-T `naeringsspesifikasjon` grouping list for 2025 and 2026.
+modeled SHALL be listed via `acctno:excludedCode`. Version 1 SHALL cover `saldogruppe` for 2025 and 2026.
+The SAF-T `naeringsspesifikasjon` grouping list is the exception: it SHALL be one `acctno:CodeList` node
+that covers income years 2025 and 2026, has no `codeListPath`, `codeListIdentifier` or `codeListVersion`,
+and its codes SHALL be literals (`acctno:saftGroupingCode`) with no `acctno:inCodeList`.
 
 #### Scenario: Fixture agrees with the model
 - **WHEN** each `acctno:CodeList` is compared with the Skatteetaten file stored as a test fixture for that year
-- **THEN** identifier and version match and every fixture code is either modeled for that year or excluded, and vice versa
+- **THEN** for each `saldogruppe` list identifier and version match and every fixture code is either modeled for that year or excluded, and vice versa
 
 #### Scenario: Filing year not covered
 - **WHEN** the tests run and income year (current year in Europe/Oslo − 1) has no `saldogruppe` code list
-- **THEN** the test logs a warning naming the missing income year
+- **THEN** the test is reported as skipped with a message naming the missing income year
 - **AND** the build does not fail
 
 ### Requirement: SAF-T grouping codes
